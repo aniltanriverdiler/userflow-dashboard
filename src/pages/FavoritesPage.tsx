@@ -49,6 +49,31 @@ function FavoritesPage() {
           ))}
         </Row>
       )}
+
+      {/* FAVORİ POSTLAR */}
+      <h2 className="mt-5">Favori Postlar</h2>
+
+      {useFavoritesStore.getState().posts.length === 0 ? (
+        <p>Henüz favorilere eklenmiş bir post yok.</p>
+      ) : (
+        <Row xs={1} md={2} className="g-4">
+          {useFavoritesStore.getState().posts.map((post) => (
+            <Col key={post.id}>
+              <Card>
+                <CardBody>
+                  <Card.Title>{post.title}</Card.Title>
+                  <CardText>{post.body}</CardText>
+                  <Link to={`/users/${post.userId}`}>
+                    <Button variant="primary" size="sm">
+                      Kullanıcıya Git
+                    </Button>
+                  </Link>
+                </CardBody>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      )}
     </Container>
   );
 }
