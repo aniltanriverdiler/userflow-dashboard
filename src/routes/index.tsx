@@ -5,6 +5,8 @@ import UserDetailPage from "../pages/UserDetailPage";
 import { userDetailLoader } from "./userDetailLoader";
 import PostDetailPage from "../pages/PostDetailPage";
 import { postDetailLoader } from "./postDetailLoader";
+import AlbumDetailPage from "../pages/AlbumDetailPage";
+import { albumDetailLoader } from "./albumDetailLoader";
 
 export const router = createBrowserRouter([
   {
@@ -21,5 +23,10 @@ export const router = createBrowserRouter([
     path: "/users/:userId/posts/:postId",
     element: <PostDetailPage />,
     loader: postDetailLoader,
+  },
+  {
+    path: "/users/:userId/albums/:albumId",
+    element: <AlbumDetailPage />,
+    loader: albumDetailLoader,
   },
 ]);
