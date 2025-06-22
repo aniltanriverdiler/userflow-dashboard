@@ -9,6 +9,7 @@ import {
   Tabs,
 } from "react-bootstrap";
 import { Link, useLoaderData } from "react-router-dom";
+import { useFavoritesStore } from "../store/favoritesStore";
 
 interface User {
   id: number;
@@ -29,6 +30,10 @@ interface User {
 }
 
 function UserDetailPage() {
+  const favoritePosts = useFavoritesStore((state) => state.posts);
+  const addPost = useFavoritesStore((state) => state.addPost);
+  const removePost = useFavoritesStore((state) => state.removePost);
+
   const user = useLoaderData() as User;
 
   const [activeTab, setActiveTab] = useState("posts");
@@ -95,12 +100,37 @@ function UserDetailPage() {
           <Tab eventKey="posts" title="Posts">
             {loading && <Spinner animation="border" variant="primary" />}
             {!loading && (
-              <ul>
-                {tabData.map((post: any) => (
-                  <li key={post.id}>
-                    <Link to={`/users/${user.id}/posts/${post.id}`}>{post.title}</Link> 
-                  </li>
-                ))}
+              <ul className="list-unstyled">
+                {tabData.map((post: any) => {
+                  const isFav = favoritePosts.some((p) => p.id === post.id);
+
+                  const toggle = () => {
+                    if (isFav) {
+                      removePost(post.id);
+                    } else {
+                      addPost({ ...post, userId: user.id });
+                    }
+                  };
+
+                  return (
+                    <li
+                      key={post.id}
+                      className="d-flex justify-content-between align-items-center mb-2"
+                    >
+                      <span>{post.title}</span>
+                      <Button
+                        variant="link"
+                        onClick={toggle}
+                        style={{
+                          color: isFav ? "red" : "gray",
+                          fontSize: "1.3rem",
+                        }}
+                      >
+                        {isFav ? "♥" : "♡"}
+                      </Button>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </Tab>

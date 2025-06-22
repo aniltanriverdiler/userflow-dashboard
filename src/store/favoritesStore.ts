@@ -1,40 +1,59 @@
+// src/store/favoritesStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface FavoritePhoto {
-    userId: number;
-    albumId: number;
-    id: number;
-    title:string;
-    url: string;
-    thumbnailUrl: string;
+interface Photo {
+  id: number;
+  title: string;
+  url: string;
+  thumbnailUrl: string;
+  albumId: number;
+  userId: number;
 }
 
-interface FavoritesStore {
-    photos: FavoritePhoto[];
-    addPhoto: (photo: FavoritePhoto) => void;
-    removePhoto: (photoId: number) => void;
-    isFavorite: (photoId: number) => boolean;
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
 }
 
-export const useFavoritesStore = create<FavoritesStore>()(
+interface FavoritesState {
+  photos: Photo[];
+  posts: Post[];
+  addPhoto: (photo: Photo) => void;
+  removePhoto: (photoId: number) => void;
+  isFavorite: (photoId: number) => boolean;
+
+  addPost: (post: Post) => void;
+  removePost: (postId: number) => void;
+  isPostFavorite: (postId: number) => boolean;
+}
+
+export const useFavoritesStore = create<FavoritesState>()(
   persist(
     (set, get) => ({
       photos: [],
-      addPhoto: (photo) => {
-        const existing = get().photos.find((p) => p.id === photo.id);
-        if (!existing) {
-          set((state) => ({ photos: [...state.photos, photo] }));
-        }
-      },
-      removePhoto: (photoId) => {
+      posts: [],
+      addPhoto: (photo) =>
+        set((state) => ({
+          photos: [...state.photos, photo],
+        })),
+      removePhoto: (photoId) =>
         set((state) => ({
           photos: state.photos.filter((p) => p.id !== photoId),
-        }));
-      },
-      isFavorite: (photoId) => {
-        return get().photos.some((p) => p.id === photoId);
-      },
+        })),
+      isFavorite: (photoId) => get().photos.some((p) => p.id === photoId),
+
+      addPost: (post) =>
+        set((state) => ({
+          posts: [...state.posts, post],
+        })),
+      removePost: (postId) =>
+        set((state) => ({
+          posts: state.posts.filter((p) => p.id !== postId),
+        })),
+      isPostFavorite: (postId) => get().posts.some((p) => p.id === postId),
     }),
     {
       name: "favorites-storage",
