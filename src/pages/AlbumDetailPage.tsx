@@ -1,3 +1,5 @@
+import { useFavoritesStore } from "../store/favoritesStore";
+
 import {
   Button,
   Card,
@@ -48,16 +50,46 @@ function AlbumDetailPage() {
       </Card>
 
       <Row xs={1} sm={2} md={3} lg={4} className="g-3">
-        {photos.map((photo) => (
-          <Col key={photo.id}>
-            <Card>
-              <Card.Img variant="top" src={photo.thumbnailUrl} />
-              <Card.Body>
-                <Card.Text>{photo.title}</Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
+        {photos.map((photo) => {
+          const isFav = useFavoritesStore((state) =>
+            state.isFavorite(photo.id)
+          );
+          const add = useFavoritesStore((state) => state.addPhoto);
+          const remove = useFavoritesStore((state) => state.removePhoto);
+
+          const toggleFavorite = () => {
+            if (isFav) {
+              remove(photo.id);
+            } else {
+              add({
+                userId: user.id,
+                albumId: album.id,
+                ...photo,
+              });
+            }
+          };
+
+          return (
+            <Col key={photo.id}>
+              <Card>
+                <Card.Img variant="top" src={photo.thumbnailUrl} />
+                <Card.Body className="d-flex justify-content-between align-items-center">
+                  <Card.Text className="me-2">{photo.title}</Card.Text>
+                  <Button
+                    variant="link"
+                    onClick={toggleFavorite}
+                    style={{
+                      color: isFav ? "red" : "gray",
+                      fontSize: "1.5rem",
+                    }}
+                  >
+                    {isFav ? "♥" : "♡"}
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          );
+        })}
       </Row>
 
       <div className="mt-4">
