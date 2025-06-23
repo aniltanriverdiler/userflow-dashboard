@@ -3,7 +3,9 @@ import {
   Button,
   Card,
   CardBody,
+  Col,
   Container,
+  Row,
   Spinner,
   Tab,
   Tabs,
@@ -100,7 +102,7 @@ function UserDetailPage() {
           <Tab eventKey="posts" title="Posts">
             {loading && <Spinner animation="border" variant="primary" />}
             {!loading && (
-              <ul className="list-unstyled">
+              <Row xs={1} md={2} lg={3} className="g-3 p-3">
                 {tabData.map((post: any) => {
                   const isFav = favoritePosts.some((p) => p.id === post.id);
 
@@ -113,25 +115,39 @@ function UserDetailPage() {
                   };
 
                   return (
-                    <li
-                      key={post.id}
-                      className="d-flex justify-content-between align-items-center mb-2"
-                    >
-                      <span>{post.title}</span>
-                      <Button
-                        variant="link"
-                        onClick={toggle}
-                        style={{
-                          color: isFav ? "red" : "gray",
-                          fontSize: "1.3rem",
-                        }}
-                      >
-                        {isFav ? "♥" : "♡"}
-                      </Button>
-                    </li>
+                    <Col key={post.id}>
+                      <Card className="h-100">
+                        <Card.Body>
+                          <Card.Title>{post.title}</Card.Title>
+                          <Card.Text>
+                            <strong>User ID:</strong> {post.userId} <br />
+                            <strong>Post ID:</strong> {post.id}
+                          </Card.Text>
+
+                          <div className="d-flex justify-content-between align-items-center">
+                            <Link to={`/users/${post.userId}/posts/${post.id}`}>
+                              <Button variant="outline-primary" size="sm">
+                                Comment Details
+                              </Button>
+                            </Link>
+
+                            <Button
+                              variant="link"
+                              onClick={toggle}
+                              style={{
+                                color: isFav ? "red" : "gray",
+                                fontSize: "1.3rem",
+                              }}
+                            >
+                              {isFav ? "♥" : "♡"}
+                            </Button>
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </Col>
                   );
                 })}
-              </ul>
+              </Row>
             )}
           </Tab>
 

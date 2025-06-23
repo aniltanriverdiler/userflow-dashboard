@@ -47,14 +47,19 @@ function PostDetailPage() {
       </Card>
 
       <h5>Yorumlar</h5>
-      <ListGroup>
+      <div className="d-flex flex-column gap-3">
         {comments.map((comment) => (
-          <ListGroupItem key={comment.id}>
-            <strong>{comment.name}</strong> ({comment.email})<br />
-            <span>{comment.body}</span>
-          </ListGroupItem>
+          <Card key={comment.id}>
+            <Card.Body>
+              <Card.Title>{comment.name}</Card.Title>
+              <Card.Subtitle className="mb-2 text-muted">
+                {comment.email}
+              </Card.Subtitle>
+              <Card.Text>{comment.body}</Card.Text>
+            </Card.Body>
+          </Card>
         ))}
-      </ListGroup>
+      </div>
 
       <div className="mt-4">
         <Link to={`/users/${user.id}`}>
