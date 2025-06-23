@@ -1,3 +1,5 @@
+import type { LoaderFunctionArgs } from "react-router-dom";
+
 export const albumDetailLoader = async ({ params }: LoaderFunctionArgs) => {
   const { userId, albumId } = params;
 

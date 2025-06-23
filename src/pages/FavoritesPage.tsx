@@ -67,18 +67,18 @@ function FavoritesPage() {
                   <Card.Title>{post.title}</Card.Title>
                   <CardText>{post.body}</CardText>
                   <div className="d-flex justify-content-between">
-                  <Link to={`/users/${post.userId}`}>
-                    <Button variant="primary" size="sm">
-                      Kullanıcıya Git
+                    <Link to={`/users/${post.userId}`}>
+                      <Button variant="primary" size="sm">
+                        Kullanıcıya Git
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => removePost(post.id)}
+                    >
+                      ♥ Kaldır
                     </Button>
-                  </Link>
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    onClick={() => removePost(post.id)}
-                  >
-                    ♥ Kaldır
-                  </Button>
                   </div>
                 </CardBody>
               </Card>

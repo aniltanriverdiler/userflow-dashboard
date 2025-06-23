@@ -1,12 +1,22 @@
-import React from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 
 interface User {
   id: number;
   name: string;
   username: string;
   email: string;
+  phone: string;
+  website: string;
+  company: {
+    name: string;
+  };
+  address: {
+    street: string;
+    suite: string;
+    city: string;
+    zipcode: string;
+  };
 }
 
 function UsersPage() {
@@ -24,8 +34,19 @@ function UsersPage() {
                 <Card.Subtitle className="mb-2 text-muted">
                   @{user.username}
                 </Card.Subtitle>
-                <Card.Text>{user.email}</Card.Text>
+                <Card.Text>
+                  <strong>Email:</strong> {user.email} <br />
+                  <strong>Phone:</strong> {user.phone} <br />
+                  <strong>Company:</strong> {user.company.name} <br />
+                  <strong>Address:</strong> {user.address.city} <br />
+                </Card.Text>
               </Card.Body>
+              <Link
+                to={`/users/${user.id}`}
+                className="btn btn-outline-primary btn-sm"
+              >
+                View Details
+              </Link>
             </Card>
           </Col>
         ))}
