@@ -1,32 +1,41 @@
 import React from "react";
 import { useFavoritesStore } from "../store/favoritesStore";
 import { Badge, Container, Nav, Navbar } from "react-bootstrap";
-import { Link, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 
-function Layout() {
-  const favoriteCount = useFavoritesStore((state) => state.photos.length);
+function AppNavbar() {
+  const photoCount = useFavoritesStore((state) => state.photos.length);
+  const postCount = useFavoritesStore((state) => state.posts.length);
 
   return (
     <>
       <Navbar bg="dark" variant="dark" expand="lg">
         <Container>
-          <Navbar.Brand as={Link} to="/users">
-            JSON UI
+          <Navbar.Brand className="ms-3" as={NavLink} to="/">
+            UserFlow Dashboard
           </Navbar.Brand>
+
           <Nav className="ms-auto">
-            <Nav.Link as={Link} to="/users">
-              Kullanıcılar
+            <Nav.Link as={NavLink} to="/users">
+              Users
             </Nav.Link>
-            <Nav.Link as={Link} to="/favorites">
-              Favoriler{" "}
-              <Badge bg="danger" pill>
-                {favoriteCount}
+
+            <Nav.Link as={NavLink} to="/favorites/photos">
+              Favorites - Albums{" "}
+              <Badge bg="light" text="dark">
+                {photoCount}
+              </Badge>
+            </Nav.Link>
+
+            <Nav.Link as={NavLink} to="/favorites/posts">
+              Favorites - Posts{" "}
+              <Badge bg="light" text="dark">
+                {postCount}
               </Badge>
             </Nav.Link>
           </Nav>
         </Container>
       </Navbar>
-
       <Container>
         <Outlet />
       </Container>
@@ -34,4 +43,4 @@ function Layout() {
   );
 }
 
-export default Layout;
+export default AppNavbar;

@@ -8,7 +8,8 @@ import { postDetailLoader } from "./postDetailLoader";
 import AlbumDetailPage from "../pages/AlbumDetailPage";
 import { albumDetailLoader } from "./albumDetailLoader";
 import Layout from "../layout/Layout";
-import FavoritesPage from "../pages/FavoritesPage";
+import FavoritesPhotosPage from "../pages/FavoritesPhotosPage";
+import FavoritesPostsPage from "../pages/FavoritesPostsPage";
 
 export const router = createBrowserRouter([
   {
@@ -36,8 +37,12 @@ export const router = createBrowserRouter([
         loader: albumDetailLoader,
       },
       {
-        path: "favorites",
-        element: <FavoritesPage />,
+        path: "/favorites/photos",
+        element: <FavoritesPhotosPage />,
+      },
+      {
+        path: "/favorites/posts",
+        element: <FavoritesPostsPage />,
       },
     ],
   },
