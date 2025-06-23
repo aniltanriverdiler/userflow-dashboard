@@ -178,13 +178,30 @@ function UserDetailPage() {
           <Tab eventKey="todos" title="Todos">
             {loading && <Spinner animation="border" variant="warning" />}
             {!loading && (
-              <ul>
+              <Row xs={1} sm={2} md={3} className="g-3 p-3">
                 {tabData.map((todo: any) => (
-                  <li key={todo.id}>
-                    {todo.title} {todo.completed ? "✅" : "❌"}
-                  </li>
+                  <Col key={todo.id}>
+                    <Card
+                      border={todo.completed ? "success" : "danger"}
+                      className="h-100"
+                    >
+                      <Card.Body>
+                        <Card.Title>{todo.title}</Card.Title>
+                        <Card.Text>
+                          <strong>User ID:</strong> {user.id} <br />
+                          <strong>Todo ID:</strong> {todo.id} <br />
+                          <strong>Status:</strong>{" "}
+                          {todo.completed ? (
+                            <span className="text-success">Completed ✅</span>
+                          ) : (
+                            <span className="text-danger">Incomplete ❌</span>
+                          )}
+                        </Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </Col>
                 ))}
-              </ul>
+              </Row>
             )}
           </Tab>
         </Tabs>
