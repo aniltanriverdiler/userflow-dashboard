@@ -154,11 +154,24 @@ function UserDetailPage() {
           <Tab eventKey="albums" title="Albums">
             {loading && <Spinner animation="border" variant="success" />}
             {!loading && (
-              <ul>
+              <div className="d-flex flex-column gap-3 p-3">
                 {tabData.map((album: any) => (
-                  <li key={album.id}>{album.title}</li>
+                  <Card key={album.id}>
+                    <Card.Body>
+                      <Card.Title>{album.title}</Card.Title>
+                      <Card.Text>
+                        <strong>User ID:</strong> {user.id} <br />
+                        <strong>Album ID:</strong> {album.id} <br />
+                      </Card.Text>
+                      <Link to={`/users/${user.id}/albums/${album.id}`}>
+                        <Button variant="primary" size="sm">
+                          Album Details
+                        </Button>
+                      </Link>
+                    </Card.Body>
+                  </Card>
                 ))}
-              </ul>
+              </div>
             )}
           </Tab>
 
