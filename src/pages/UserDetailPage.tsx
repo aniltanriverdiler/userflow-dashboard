@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   Button,
   Card,
-  CardBody,
   Col,
   Container,
   Row,
@@ -102,7 +101,7 @@ function UserDetailPage() {
             {`${user.address.suite}, ${user.address.street}, ${user.address.city}, ${user.address.zipcode}`}
           </Card.Text>
           <Link to="/users">
-            <Button variant="primary">Geri Dön</Button>
+            <Button variant="primary">Go Back</Button>
           </Link>
         </Card.Body>
         <Tabs
@@ -217,9 +216,9 @@ function UserDetailPage() {
             )}
           </Tab>
 
-          <Tab eventKey="edit-posts" title="Gönderileri Düzenle" />
+          <Tab eventKey="edit-posts" title="Edit Posts" />
 
-          <Tab eventKey="edit-albums" title="Albümleri Düzenle" />
+          <Tab eventKey="edit-albums" title="Edit Albums" />
         </Tabs>
       </Card>
     </Container>

@@ -17,10 +17,10 @@ function FavoritesPostsPage() {
 
   return (
     <Container className="my-4">
-      <h2 className="mt-5">Favori Postlar</h2>
+      <h2 className="mt-5">Favorite Posts</h2>
 
       {useFavoritesStore.getState().posts.length === 0 ? (
-        <p>Henüz favorilere eklenmiş bir post yok.</p>
+        <p>You haven't saved any posts yet.</p>
       ) : (
         <Row xs={1} md={2} className="g-4">
           {posts.map((post) => (
@@ -32,7 +32,7 @@ function FavoritesPostsPage() {
                   <div className="d-flex justify-content-between">
                     <Link to={`/users/${post.userId}`}>
                       <Button variant="primary" size="sm">
-                        Kullanıcıya Git
+                        View Profile
                       </Button>
                     </Link>
                     <Button
@@ -40,7 +40,7 @@ function FavoritesPostsPage() {
                       size="sm"
                       onClick={() => removePost(post.id)}
                     >
-                      ♥ Kaldır
+                      ♥ Remove
                     </Button>
                   </div>
                 </CardBody>

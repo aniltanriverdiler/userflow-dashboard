@@ -12,7 +12,7 @@ function HomePage() {
         </p>
       </header>
 
-      {/* Bilgi Kartları */}
+      {/* Description Cards */}
       <Row className="mb-5">
         <Col md={4}>
           <Card className="h-100 text-center shadow-sm">

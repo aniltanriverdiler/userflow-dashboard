@@ -2,8 +2,6 @@ import {
   Button,
   Card,
   Container,
-  ListGroup,
-  ListGroupItem,
 } from "react-bootstrap";
 import { Link, useLoaderData } from "react-router-dom";
 
@@ -40,13 +38,13 @@ function PostDetailPage() {
         <Card.Body>
           <Card.Text>{post.body}</Card.Text>
           <Card.Text>
-            <strong>Yazar:</strong>{" "}
+            <strong>Author:</strong>{" "}
             <Link to={`/user/${user.id}`}>{user.name}</Link>
           </Card.Text>
         </Card.Body>
       </Card>
 
-      <h5>Yorumlar</h5>
+      <h5>Comments</h5>
       <div className="d-flex flex-column gap-3">
         {comments.map((comment) => (
           <Card key={comment.id}>
@@ -63,7 +61,7 @@ function PostDetailPage() {
 
       <div className="mt-4">
         <Link to={`/users/${user.id}`}>
-          <Button variant="secondary">Kullanıcı Profiline Geri Dön</Button>
+          <Button variant="secondary">Return to Profile</Button>
         </Link>
       </div>
     </Container>

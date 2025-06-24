@@ -4,7 +4,7 @@ export const userDetailLoader = async ({ params }: LoaderFunctionArgs) => {
   const { userId } = params;
 
   if (!userId) {
-    throw new Error("User ID bulunamadı.");
+    throw new Error("Account not found.");
   }
 
   const response = await fetch(
@@ -12,7 +12,7 @@ export const userDetailLoader = async ({ params }: LoaderFunctionArgs) => {
   );
 
   if (!response.ok) {
-    throw new Error("Kullanıcı verisi yüklenemedim.");
+    throw new Error("Failed to load user data.");
   }
 
   const user = await response.json();

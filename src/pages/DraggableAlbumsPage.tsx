@@ -122,7 +122,7 @@ function DraggableAlbumsPage() {
 
       <div className="text-center">
         <Button variant="success" className="mt-4" onClick={handleSave}>
-          Save Order
+          Save Changes
         </Button>
       </div>
 

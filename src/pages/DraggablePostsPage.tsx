@@ -118,7 +118,7 @@ function DraggablePostsPage() {
 
       <div className="text-center">
         <Button variant="success" className="mt-4" onClick={handleSave}>
-          Değişiklikleri Kaydet
+          Save Changes
         </Button>
       </div>
 

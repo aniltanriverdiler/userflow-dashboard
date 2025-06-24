@@ -1,7 +1,6 @@
-import React from "react";
 import { useFavoritesStore } from "../store/favoritesStore";
 import { Badge, Container, Nav, Navbar } from "react-bootstrap";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 
 function AppNavbar() {
   const photoCount = useFavoritesStore((state) => state.photos.length);

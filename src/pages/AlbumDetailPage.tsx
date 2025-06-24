@@ -43,7 +43,7 @@ function AlbumDetailPage() {
         <CardHeader as="h4">{album.title}</CardHeader>
         <CardBody>
           <CardText>
-            <strong>Sahibi:</strong>{" "}
+            <strong>Owner:</strong>{" "}
             <Link to={`/users/${user.id}`}>{user.name}</Link>
           </CardText>
         </CardBody>
@@ -94,7 +94,7 @@ function AlbumDetailPage() {
 
       <div className="mt-4">
         <Link to={`/users/${user.id}`}>
-          <Button variant="secondary">← Kullanıcı Profiline Dön</Button>
+          <Button variant="secondary">← Return to User Profile</Button>
         </Link>
       </div>
     </Container>

@@ -4,7 +4,7 @@ export const postDetailLoader = async ({ params }: LoaderFunctionArgs) => {
   const { userId, postId } = params;
 
   if (!userId || !postId) {
-    throw new Error("Gerekli parametreler eksik!");
+    throw new Error("Required parameters are missing!");
   }
 
   const [postRes, commentsRes, userRes] = await Promise.all([
@@ -14,7 +14,7 @@ export const postDetailLoader = async ({ params }: LoaderFunctionArgs) => {
   ]);
 
   if (!postRes.ok || !commentsRes.ok || !userRes.ok) {
-    throw new Error("Veriler çekilemedi!");
+    throw new Error("Failed to fetch data!");
   }
 
   const post = await postRes.json();

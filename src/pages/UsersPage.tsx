@@ -24,7 +24,7 @@ function UsersPage() {
 
   return (
     <Container>
-      <h1 className="mb-4">Kullanıcılar</h1>
+      <h1 className="mb-4">Users</h1>
       <Row>
         {users.map((user) => (
           <Col key={user.id} md={4} className="mb-4">

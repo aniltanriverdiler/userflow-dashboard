@@ -4,7 +4,7 @@ export const albumDetailLoader = async ({ params }: LoaderFunctionArgs) => {
   const { userId, albumId } = params;
 
   if (!userId || !albumId) {
-    throw new Error("Gerekli parametreler eksik!");
+    throw new Error("Required parameters are missing!");
   }
 
   const [albumRes, photosRes, userRes] = await Promise.all([
@@ -14,7 +14,7 @@ export const albumDetailLoader = async ({ params }: LoaderFunctionArgs) => {
   ]);
 
   if (!albumRes.ok || !photosRes.ok || !userRes.ok) {
-    throw new Error("Albüm detayları yüklenemedi!");
+    throw new Error("Could not load album details!");
   }
 
   const album = await albumRes.json();
