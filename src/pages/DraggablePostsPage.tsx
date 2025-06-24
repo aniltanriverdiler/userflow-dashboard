@@ -6,7 +6,15 @@ import {
   Draggable,
   type DropResult,
 } from "@hello-pangea/dnd";
-import { Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Modal,
+  Row,
+  Spinner,
+} from "react-bootstrap";
 
 interface Post {
   id: number;
@@ -19,6 +27,7 @@ function DraggablePostsPage() {
   const { userId } = useParams();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const savedPosts = localStorage.getItem(`user_${userId}_posts`);
@@ -52,7 +61,7 @@ function DraggablePostsPage() {
 
   const handleSave = () => {
     localStorage.setItem(`user_${userId}_posts`, JSON.stringify(posts));
-    alert("Post sıralaması kaydedildi!");
+    setShowModal(true);
   };
 
   if (loading) {
@@ -112,6 +121,18 @@ function DraggablePostsPage() {
           Değişiklikleri Kaydet
         </Button>
       </div>
+
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Success</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Post order has been saved successfully! (Note: Changes are not permanent as this is a demo.)</Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => setShowModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }

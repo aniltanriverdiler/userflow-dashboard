@@ -15,7 +15,7 @@ function AppNavbar() {
             UserFlow Dashboard
           </Navbar.Brand>
 
-          <Nav className="ms-auto">
+          <Nav className="ms-auto gap-4">
             <Nav.Link as={NavLink} to="/users">
               Users
             </Nav.Link>
