@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import {
   DragDropContext,
   Droppable,
@@ -9,10 +9,8 @@ import {
 import {
   Button,
   Card,
-  Col,
   Container,
   Modal,
-  Row,
   Spinner,
 } from "react-bootstrap";
 
@@ -120,6 +118,12 @@ function DraggablePostsPage() {
         <Button variant="success" className="mt-4" onClick={handleSave}>
           Save Changes
         </Button>
+      </div>
+
+      <div className="mt-4">
+        <Link to={`/users/${userId}`}>
+          <Button variant="secondary">← Return to User Profile</Button>
+        </Link>
       </div>
 
       {/* Modal */}

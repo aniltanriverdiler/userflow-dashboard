@@ -1,8 +1,4 @@
-import {
-  Button,
-  Card,
-  Container,
-} from "react-bootstrap";
+import { Button, Card, Container } from "react-bootstrap";
 import { Link, useLoaderData } from "react-router-dom";
 
 interface Post {
@@ -61,7 +57,7 @@ function PostDetailPage() {
 
       <div className="mt-4">
         <Link to={`/users/${user.id}`}>
-          <Button variant="secondary">Return to Profile</Button>
+          <Button variant="secondary">← Return to User Profile</Button>
         </Link>
       </div>
     </Container>

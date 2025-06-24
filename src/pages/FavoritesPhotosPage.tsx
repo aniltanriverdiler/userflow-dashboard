@@ -1,4 +1,3 @@
-// src/pages/FavoritesPage.tsx
 import { useFavoritesStore } from "../store/favoritesStore";
 import {
   Button,
