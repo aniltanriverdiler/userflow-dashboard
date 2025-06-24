@@ -10,7 +10,7 @@ import {
   Tab,
   Tabs,
 } from "react-bootstrap";
-import { Link, useLoaderData } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { useFavoritesStore } from "../store/favoritesStore";
 
 interface User {
@@ -41,6 +41,16 @@ function UserDetailPage() {
   const [activeTab, setActiveTab] = useState("posts");
   const [tabData, setTabData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleSelect = (key: string | null) => {
+    if (key === "edit-posts") {
+      navigate(`/users/${user.id}/draggable-posts`);
+    } else {
+      setActiveTab(key as string);
+    }
+  };
 
   useEffect(() => {
     if (!user?.id) return;
@@ -94,10 +104,10 @@ function UserDetailPage() {
           </Link>
         </Card.Body>
         <Tabs
-          defaultActiveKey="posts"
+          activeKey={activeTab}
+          onSelect={handleSelect}
           id="user-tabs"
           className="mt-4"
-          onSelect={(key) => setActiveTab(key as string)}
         >
           <Tab eventKey="posts" title="Posts">
             {loading && <Spinner animation="border" variant="primary" />}
@@ -204,6 +214,8 @@ function UserDetailPage() {
               </Row>
             )}
           </Tab>
+
+          <Tab eventKey="edit-posts" title="Gönderileri Düzenle" />
         </Tabs>
       </Card>
     </Container>

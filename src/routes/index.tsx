@@ -11,6 +11,7 @@ import Layout from "../layout/Layout";
 import FavoritesPhotosPage from "../pages/FavoritesPhotosPage";
 import FavoritesPostsPage from "../pages/FavoritesPostsPage";
 import HomePage from "../pages/HomePage";
+import DraggablePostsPage from "../pages/DraggablePostsPage";
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
         path: "users/:userId/albums/:albumId",
         element: <AlbumDetailPage />,
         loader: albumDetailLoader,
+      },
+      {
+        path: "users/:userId/draggable-posts",
+        element: <DraggablePostsPage />,
       },
       {
         path: "/favorites/photos",
