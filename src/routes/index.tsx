@@ -12,6 +12,7 @@ import FavoritesPhotosPage from "../pages/FavoritesPhotosPage";
 import FavoritesPostsPage from "../pages/FavoritesPostsPage";
 import HomePage from "../pages/HomePage";
 import DraggablePostsPage from "../pages/DraggablePostsPage";
+import DraggableAlbumsPage from "../pages/DraggableAlbumsPage";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ export const router = createBrowserRouter([
       {
         path: "users/:userId/draggable-posts",
         element: <DraggablePostsPage />,
+      },
+      {
+         path: "users/:userId/draggable-albums",
+        element: <DraggableAlbumsPage />,
       },
       {
         path: "/favorites/photos",

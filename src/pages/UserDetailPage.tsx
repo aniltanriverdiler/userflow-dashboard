@@ -47,6 +47,8 @@ function UserDetailPage() {
   const handleSelect = (key: string | null) => {
     if (key === "edit-posts") {
       navigate(`/users/${user.id}/draggable-posts`);
+    } else if (key === "edit-albums") {
+      navigate(`/users/${user.id}/draggable-albums`);
     } else {
       setActiveTab(key as string);
     }
@@ -216,6 +218,8 @@ function UserDetailPage() {
           </Tab>
 
           <Tab eventKey="edit-posts" title="Gönderileri Düzenle" />
+
+          <Tab eventKey="edit-albums" title="Albümleri Düzenle" />
         </Tabs>
       </Card>
     </Container>

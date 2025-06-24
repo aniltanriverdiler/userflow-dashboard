@@ -122,11 +122,15 @@ function DraggablePostsPage() {
         </Button>
       </div>
 
+      {/* Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Success</Modal.Title>
+          <Modal.Title>Success!</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Post order has been saved successfully! (Note: Changes are not permanent as this is a demo.)</Modal.Body>
+        <Modal.Body>
+          Post order has been saved successfully! (Note: Changes are not
+          permanent as this is a demo.)
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="primary" onClick={() => setShowModal(false)}>
             Close
