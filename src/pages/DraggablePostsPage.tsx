@@ -64,40 +64,44 @@ function DraggablePostsPage() {
   }
 
   return (
-    <Container className="my-4">
-      <h2 className="mb-4">Edit Posts</h2>
+    <Container className="px-5 m-5">
+      <h2 className="text-center mb-4">Drag & Drop to Reorder Posts</h2>
+
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="posts">
           {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              <Row xs={1} md={2} lg={3} className="g-3">
-                {posts.map((post, index) => (
-                  <Draggable
-                    key={post.id.toString()}
-                    draggableId={post.id.toString()}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <Col
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <Card>
-                          <Card.Body>
-                            <Card.Title>{post.title}</Card.Title>
-                            <Card.Text>
-                              <strong>User ID:</strong> {post.userId}
-                              <br />
-                              <strong>Post ID:</strong> {post.id}
-                            </Card.Text>
-                          </Card.Body>
-                        </Card>
-                      </Col>
-                    )}
-                  </Draggable>
-                ))}
-              </Row>
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="d-flex flex-column gap-3"
+            >
+              {posts.map((post, index) => (
+                <Draggable
+                  key={post.id.toString()}
+                  draggableId={post.id.toString()}
+                  index={index}
+                >
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <Card>
+                        <Card.Body>
+                          <Card.Title>{post.title}</Card.Title>
+                          <Card.Text>
+                            <strong>User ID:</strong> {post.userId}
+                            <br />
+                            <strong>Post ID:</strong> {post.id}
+                          </Card.Text>
+                        </Card.Body>
+                      </Card>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
             </div>
           )}
         </Droppable>
