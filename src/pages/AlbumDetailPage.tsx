@@ -37,10 +37,16 @@ function AlbumDetailPage() {
     user: User;
   };
 
+  const favoritePhotos = useFavoritesStore((state) => state.photos);
+  const addPhoto = useFavoritesStore((state) => state.addPhoto);
+  const removePhoto = useFavoritesStore((state) => state.removePhoto);
+
   return (
     <Container className="my-4">
       <Card className="mb-4">
-        <CardHeader as="h4">{album.title}</CardHeader>
+        <CardHeader as="h4" className="text-truncate">
+          {album.title}
+        </CardHeader>
         <CardBody>
           <CardText>
             <strong>Owner:</strong>{" "}
@@ -51,17 +57,13 @@ function AlbumDetailPage() {
 
       <Row xs={1} sm={2} md={3} lg={4} className="g-3">
         {photos.map((photo) => {
-          const isFav = useFavoritesStore((state) =>
-            state.isFavorite(photo.id)
-          );
-          const add = useFavoritesStore((state) => state.addPhoto);
-          const remove = useFavoritesStore((state) => state.removePhoto);
+          const isFav = favoritePhotos.some((p) => p.id === photo.id);
 
           const toggleFavorite = () => {
             if (isFav) {
-              remove(photo.id);
+              removePhoto(photo.id);
             } else {
-              add({
+              addPhoto({
                 userId: user.id,
                 albumId: album.id,
                 ...photo,
@@ -72,9 +74,23 @@ function AlbumDetailPage() {
           return (
             <Col key={photo.id}>
               <Card>
-                <Card.Img variant="top" src={photo.thumbnailUrl} />
+                <Card.Img
+                  variant="top"
+                  src={photo.thumbnailUrl}
+                  onError={(e) => {
+                    (
+                      e.target as HTMLImageElement
+                    ).src = `https://picsum.photos/id/${photo.id + 10}/150/150`;
+                  }}
+                />
                 <Card.Body className="d-flex justify-content-between align-items-center">
-                  <Card.Text className="me-2">{photo.title}</Card.Text>
+                  <Card.Text
+                    className="me-2 text-truncate"
+                    title={photo.title}
+                    style={{ maxWidth: "150px" }}
+                  >
+                    {photo.title}
+                  </Card.Text>
                   <Button
                     variant="link"
                     onClick={toggleFavorite}

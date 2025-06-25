@@ -25,7 +25,15 @@ function FavoritesPhotosPage() {
           {photos.map((photo) => (
             <Col key={photo.id}>
               <Card>
-                <Card.Img variant="top" src={photo.thumbnailUrl} />
+                <Card.Img
+                  variant="top"
+                  src={photo.thumbnailUrl}
+                  onError={(e) => {
+                    (
+                      e.target as HTMLImageElement
+                    ).src = `https://placehold.co/150x150?text=Photo+${photo.id}`;
+                  }}
+                />
                 <CardBody>
                   <CardText>{photo.title}</CardText>
                   <div className="d-flex justify-content-between">
