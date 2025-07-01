@@ -11,8 +11,32 @@ import {
 import { Link } from "react-router-dom";
 
 function FavoritesPhotosPage() {
-  const photos = useFavoritesStore((state) => state.photos);
+  const currentUserId = Number(localStorage.getItem("current_user_id"));
+
+  if (!currentUserId) {
+    return (
+      <Container className="my-4">
+        <p>No user selected. Please log in or choose a user.</p>
+      </Container>
+    );
+  }
+
+  const getPhotosByUser = useFavoritesStore((state) => state.getPhotosByUser);
   const removePhoto = useFavoritesStore((state) => state.removePhoto);
+
+  const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
+
+  if (!hasHydrated) {
+    return (
+      <Container className="my-4">
+        <p>Loading favorites...</p>
+      </Container>
+    );
+  }
+
+  const photos = useFavoritesStore((state) =>
+    state.getPhotosByUser(currentUserId)
+  );
 
   return (
     <Container className="my-4">
@@ -25,17 +49,11 @@ function FavoritesPhotosPage() {
           {photos.map((photo) => (
             <Col key={photo.id}>
               <Card>
-                <Card.Img
-                  variant="top"
-                  src={photo.thumbnailUrl}
-                  onError={(e) => {
-                    (
-                      e.target as HTMLImageElement
-                    ).src = `https://placehold.co/150x150?text=Photo+${photo.id}`;
-                  }}
-                />
+                <Card.Img variant="top" src={photo.thumbnailUrl} />
                 <CardBody>
-                  <CardText>{photo.title}</CardText>
+                  <CardText className="text-truncate" title={photo.title}>
+                    {photo.title}
+                  </CardText>
                   <div className="d-flex justify-content-between">
                     <Link to={`/users/${photo.userId}/albums/${photo.albumId}`}>
                       <Button variant="primary" size="sm">
@@ -45,7 +63,7 @@ function FavoritesPhotosPage() {
                     <Button
                       variant="outline-danger"
                       size="sm"
-                      onClick={() => removePhoto(photo.id)}
+                      onClick={() => removePhoto(photo.id, currentUserId)}
                     >
                       ♥ Remove
                     </Button>

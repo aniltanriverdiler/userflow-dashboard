@@ -22,6 +22,8 @@ interface Photo {
   title: string;
   url: string;
   thumbnailUrl: string;
+  userId: number;
+  albumId: number;
 }
 
 interface User {
@@ -37,9 +39,19 @@ function AlbumDetailPage() {
     user: User;
   };
 
-  const favoritePhotos = useFavoritesStore((state) => state.photos);
+  const currentUserId = Number(localStorage.getItem("current_user_id"));
+  const getPhotosByUser = useFavoritesStore((state) =>
+    state.getPhotosByUser
+  );
+
+  const favoritePhotos = getPhotosByUser(currentUserId); 
+
   const addPhoto = useFavoritesStore((state) => state.addPhoto);
   const removePhoto = useFavoritesStore((state) => state.removePhoto);
+
+  const isPhotoFavorite = (photoId: number) => {
+    return favoritePhotos.some((p) => p.id === photoId && p.userId === currentUserId);
+  }; 
 
   return (
     <Container className="my-4">
@@ -57,32 +69,22 @@ function AlbumDetailPage() {
 
       <Row xs={1} sm={2} md={3} lg={4} className="g-3">
         {photos.map((photo) => {
-          const isFav = favoritePhotos.some((p) => p.id === photo.id);
+          const isFav = isPhotoFavorite(photo.id);
 
           const toggleFavorite = () => {
             if (isFav) {
-              removePhoto(photo.id);
+              console.log(isFav);
+              removePhoto(photo.id, currentUserId);
             } else {
-              addPhoto({
-                userId: user.id,
-                albumId: album.id,
-                ...photo,
-              });
+              console.log({ ...photo, userId: currentUserId });
+              addPhoto({ ...photo, userId: currentUserId }, currentUserId);
             }
           };
 
           return (
             <Col key={photo.id}>
               <Card>
-                <Card.Img
-                  variant="top"
-                  src={photo.thumbnailUrl}
-                  onError={(e) => {
-                    (
-                      e.target as HTMLImageElement
-                    ).src = `https://picsum.photos/id/${photo.id + 10}/150/150`;
-                  }}
-                />
+                <Card.Img variant="top" src={photo.thumbnailUrl} />
                 <Card.Body className="d-flex justify-content-between align-items-center">
                   <Card.Text
                     className="me-2 text-truncate"

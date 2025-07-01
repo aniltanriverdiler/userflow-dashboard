@@ -7,19 +7,40 @@ export const albumDetailLoader = async ({ params }: LoaderFunctionArgs) => {
     throw new Error("Required parameters are missing!");
   }
 
-  const [albumRes, photosRes, userRes] = await Promise.all([
+  const [albumRes, userRes] = await Promise.all([
     fetch(`https://jsonplaceholder.typicode.com/albums/${albumId}`),
-    fetch(`https://jsonplaceholder.typicode.com/albums/${albumId}/photos`),
     fetch(`https://jsonplaceholder.typicode.com/users/${userId}`),
   ]);
 
-  if (!albumRes.ok || !photosRes.ok || !userRes.ok) {
-    throw new Error("Could not load album details!");
+  if (!albumRes.ok || !userRes.ok) {
+    throw new Error("Could not load album or user!");
   }
 
   const album = await albumRes.json();
-  const photos = await photosRes.json();
   const user = await userRes.json();
+
+  // Fetching from Unsplash API
+  const unsplashResponse = await fetch(
+    `https://api.unsplash.com/photos?page=1&per_page=10&query=nature&client_id=${
+      import.meta.env.VITE_UNSPLASH_ACCESS_KEY
+    }`
+  );
+
+  if (!unsplashResponse.ok) {
+    throw new Error("Failed to fetch Unsplash photos!");
+  }
+
+  const unsplashPhotos = await unsplashResponse.json();
+
+  // Normalizing JSON responses
+  const photos = unsplashPhotos.map((photo: any, index: number) => ({
+    id: index + 1,
+    title: photo.description || photo.alt_description || "Untitled",
+    url: photo.urls.full,
+    thumbnailUrl: photo.urls.thumb,
+    userId: Number(userId),
+    albumId: Number(albumId),
+  }));
 
   return { album, photos, user };
 };

@@ -3,7 +3,12 @@ import { Badge, Container, Nav, Navbar } from "react-bootstrap";
 import { NavLink, Outlet } from "react-router-dom";
 
 function AppNavbar() {
-  const photoCount = useFavoritesStore((state) => state.photos.length);
+  const currentUserId = Number(localStorage.getItem("current_user_id"));
+
+  const photoCount = useFavoritesStore(
+    (state) => state.favoritesByUser[currentUserId]?.length || 0
+  );
+
   const postCount = useFavoritesStore((state) => state.posts.length);
 
   return (

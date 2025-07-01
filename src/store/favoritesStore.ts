@@ -18,44 +18,79 @@ interface Post {
 }
 
 interface FavoritesState {
-  photos: Photo[];
+  favoritesByUser: Record<number, Photo[]>;
   posts: Post[];
-  addPhoto: (photo: Photo) => void;
-  removePhoto: (photoId: number) => void;
-  isFavorite: (photoId: number) => boolean;
+  hasHydrated: boolean;
+
+  addPhoto: (photo: Photo, userId: number) => void;
+  removePhoto: (photoId: number, userId: number) => void;
+  isFavorite: (photoId: number, userId: number) => boolean;
+  getPhotosByUser: (userId: number) => Photo[];
 
   addPost: (post: Post) => void;
   removePost: (postId: number) => void;
   isPostFavorite: (postId: number) => boolean;
+
+  setHydrated: () => void;
 }
 
 export const useFavoritesStore = create<FavoritesState>()(
   persist(
     (set, get) => ({
-      photos: [],
+      favoritesByUser: {},
       posts: [],
-      addPhoto: (photo) =>
+      hasHydrated: false,
+
+      setHydrated: () => set({ hasHydrated: true }),
+
+      addPhoto: (photo, userId) => {
+        const current = get().favoritesByUser[userId] || [];
+        if (current.some((p) => p.id === photo.id)) return;
+
         set((state) => ({
-          photos: [...state.photos, photo],
-        })),
-      removePhoto: (photoId) =>
+          favoritesByUser: {
+            ...state.favoritesByUser,
+            [userId]: [...current, photo],
+          },
+        }));
+      },
+
+      removePhoto: (photoId, userId) => {
+        const current = get().favoritesByUser[userId] || [];
         set((state) => ({
-          photos: state.photos.filter((p) => p.id !== photoId),
-        })),
-      isFavorite: (photoId) => get().photos.some((p) => p.id === photoId),
+          favoritesByUser: {
+            ...state.favoritesByUser,
+            [userId]: current.filter((p) => p.id !== photoId),
+          },
+        }));
+      },
+
+      isFavorite: (photoId, userId) => {
+        const current = get().favoritesByUser[userId] || [];
+        return current.some((p) => p.id === photoId);
+      },
+
+      getPhotosByUser: (userId) => {
+        return get().favoritesByUser[userId] || [];
+      },
 
       addPost: (post) =>
         set((state) => ({
           posts: [...state.posts, post],
         })),
+
       removePost: (postId) =>
         set((state) => ({
           posts: state.posts.filter((p) => p.id !== postId),
         })),
+
       isPostFavorite: (postId) => get().posts.some((p) => p.id === postId),
     }),
     {
       name: "favorites-storage",
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated(); 
+      },
     }
   )
 );
