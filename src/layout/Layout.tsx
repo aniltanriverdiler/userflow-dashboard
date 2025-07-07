@@ -1,9 +1,22 @@
 import { useFavoritesStore } from "../store/favoritesStore";
 import { Badge, Container, Nav, Navbar } from "react-bootstrap";
 import { NavLink, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function AppNavbar() {
-  const currentUserId = Number(localStorage.getItem("current_user_id"));
+  const [currentUserId, setCurrentUserId] = useState<number>(() => Number(localStorage.getItem("current_user_id")));
+
+  useEffect(() => {
+    const handleStorage = () => {
+      setCurrentUserId(Number(localStorage.getItem("current_user_id")));
+    };
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("current_user_id_change", handleStorage);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("current_user_id_change", handleStorage);
+    };
+  }, []);
 
   const photoCount = useFavoritesStore(
     (state) => state.favoritesByUser[currentUserId]?.length || 0

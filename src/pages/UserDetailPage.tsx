@@ -30,6 +30,23 @@ interface User {
   };
 }
 
+interface Post {
+  id: number;
+  title: string;
+  userId: number;
+}
+
+interface Album {
+  id: number;
+  title: string;
+}
+
+interface Todo {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
 function UserDetailPage() {
   const favoritePosts = useFavoritesStore((state) => state.posts);
   const addPost = useFavoritesStore((state) => state.addPost);
@@ -38,7 +55,7 @@ function UserDetailPage() {
   const user = useLoaderData() as User;
 
   const [activeTab, setActiveTab] = useState("posts");
-  const [tabData, setTabData] = useState<any[]>([]);
+  const [tabData, setTabData] = useState<(Post | Album | Todo)[]>([]);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -81,6 +98,15 @@ function UserDetailPage() {
     fetchData();
   }, [activeTab, user]);
 
+  // Kullanıcı detayına girildiğinde current_user_id olarak localStorage'a yaz
+  useEffect(() => {
+    if (user?.id) {
+      localStorage.setItem("current_user_id", String(user.id));
+      // Aynı sekmede AppNavbar'ın state'ini güncellemek için custom event dispatch et
+      window.dispatchEvent(new Event("current_user_id_change"));
+    }
+  }, [user?.id]);
+
   return (
     <Container className="my-4">
       <Card>
@@ -114,17 +140,16 @@ function UserDetailPage() {
             {loading && <Spinner animation="border" variant="primary" />}
             {!loading && (
               <Row xs={1} md={2} lg={3} className="g-3 p-3">
-                {tabData.map((post: any) => {
+                {tabData.filter((item): item is Post => 'body' in item).map((post) => {
                   const isFav = favoritePosts.some((p) => p.id === post.id);
-
                   const toggle = () => {
                     if (isFav) {
                       removePost(post.id);
                     } else {
-                      addPost({ ...post, userId: user.id });
+                      const postWithBody = post as Post;
+                      addPost({ ...postWithBody, userId: user.id, body: postWithBody.body ?? "" });
                     }
                   };
-
                   return (
                     <Col key={post.id}>
                       <Card className="h-100">
@@ -134,14 +159,12 @@ function UserDetailPage() {
                             <strong>User ID:</strong> {post.userId} <br />
                             <strong>Post ID:</strong> {post.id}
                           </Card.Text>
-
                           <div className="d-flex justify-content-between align-items-center">
                             <Link to={`/users/${post.userId}/posts/${post.id}`}>
                               <Button variant="outline-primary" size="sm">
                                 Comment Details
                               </Button>
                             </Link>
-
                             <Button
                               variant="link"
                               onClick={toggle}
@@ -166,7 +189,7 @@ function UserDetailPage() {
             {loading && <Spinner animation="border" variant="success" />}
             {!loading && (
               <div className="d-flex flex-column gap-3 p-3">
-                {tabData.map((album: any) => (
+                {tabData.filter((item): item is Album => !('body' in item) && !('completed' in item)).map((album) => (
                   <Card key={album.id}>
                     <Card.Body>
                       <Card.Title>{album.title}</Card.Title>
@@ -190,7 +213,7 @@ function UserDetailPage() {
             {loading && <Spinner animation="border" variant="warning" />}
             {!loading && (
               <Row xs={1} sm={2} md={3} className="g-3 p-3">
-                {tabData.map((todo: any) => (
+                {tabData.filter((item): item is Todo => 'completed' in item).map((todo) => (
                   <Col key={todo.id}>
                     <Card
                       border={todo.completed ? "success" : "danger"}

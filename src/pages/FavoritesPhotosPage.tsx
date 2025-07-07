@@ -9,19 +9,23 @@ import {
   Container,
   Row,
 } from "react-bootstrap";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 
-function FavoritesPhotosPage() { 
+function FavoritesPhotosPage() {
   const currentUserId = Number(localStorage.getItem("current_user_id"));
-  const rawFavByUser = useFavoritesStore((state)=>state.favoritesByUser)
-  const [photos,setPhotos]=useState<Photo[]>([]);
+  const removePhoto = useFavoritesStore((state) => state.removePhoto);
+  const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
 
+  const [photos, setPhotos] = useState<Photo[]>([]);
 
-  useEffect(()=>{
-    setPhotos(rawFavByUser[currentUserId] || [])
-  },[rawFavByUser,currentUserId])
+  useEffect(() => {
+    const unsubscribe = useFavoritesStore.subscribe((state) => {
+      setPhotos(state.getPhotosByUser(currentUserId));
+    });
+    setPhotos(useFavoritesStore.getState().getPhotosByUser(currentUserId));
+    return () => unsubscribe();
+  }, [currentUserId]);
 
-  
   if (!currentUserId) {
     return (
       <Container className="my-4">
@@ -29,11 +33,6 @@ function FavoritesPhotosPage() {
       </Container>
     );
   }
-
-  // const getPhotosByUser = useFavoritesStore((state) => state.getPhotosByUser);
-  const removePhoto = useFavoritesStore((state) => state.removePhoto);
-
-  const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
 
   if (!hasHydrated) {
     return (
@@ -43,16 +42,11 @@ function FavoritesPhotosPage() {
     );
   }
 
-  // const photos = useFavoritesStore((state) =>
-  //   state.favoritesByUser[currentUserId] || [] 
-  // );
-
   return (
     <Container className="my-4">
       <h2>Favorite Photos</h2>
-
       {photos.length === 0 ? (
-        <p>You don’t have any favorite photos yet.</p>
+        <p>You don't have any favorite photos yet.</p>
       ) : (
         <Row xs={1} sm={2} md={3} lg={4} className="g-3">
           {photos.map((photo) => (

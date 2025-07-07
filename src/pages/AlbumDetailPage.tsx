@@ -75,11 +75,9 @@ function AlbumDetailPage() {
           const isCurrentAccount = isCheckUser(photo.userId);
           const toggleFavorite = () => {
             if (isFav) {
-              console.log(isFav);
               removePhoto(photo.id, currentUserId);
             } else {
               addPhoto(photo, currentUserId);
-              console.log("selam", { ...photo, userId: currentUserId });
             }
           };
 
