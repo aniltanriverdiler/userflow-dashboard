@@ -1,4 +1,5 @@
-import { useFavoritesStore } from "../store/favoritesStore";
+import { useEffect, useState } from "react";
+import { useFavoritesStore, type Photo } from "../store/favoritesStore";
 import {
   Button,
   Card,
@@ -8,11 +9,19 @@ import {
   Container,
   Row,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; 
 
-function FavoritesPhotosPage() {
+function FavoritesPhotosPage() { 
   const currentUserId = Number(localStorage.getItem("current_user_id"));
+  const rawFavByUser = useFavoritesStore((state)=>state.favoritesByUser)
+  const [photos,setPhotos]=useState<Photo[]>([]);
 
+
+  useEffect(()=>{
+    setPhotos(rawFavByUser[currentUserId] || [])
+  },[rawFavByUser,currentUserId])
+
+  
   if (!currentUserId) {
     return (
       <Container className="my-4">
@@ -21,7 +30,7 @@ function FavoritesPhotosPage() {
     );
   }
 
-  const getPhotosByUser = useFavoritesStore((state) => state.getPhotosByUser);
+  // const getPhotosByUser = useFavoritesStore((state) => state.getPhotosByUser);
   const removePhoto = useFavoritesStore((state) => state.removePhoto);
 
   const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
@@ -34,9 +43,9 @@ function FavoritesPhotosPage() {
     );
   }
 
-  const photos = useFavoritesStore((state) =>
-    state.getPhotosByUser(currentUserId)
-  );
+  // const photos = useFavoritesStore((state) =>
+  //   state.favoritesByUser[currentUserId] || [] 
+  // );
 
   return (
     <Container className="my-4">

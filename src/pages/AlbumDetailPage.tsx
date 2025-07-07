@@ -40,18 +40,20 @@ function AlbumDetailPage() {
   };
 
   const currentUserId = Number(localStorage.getItem("current_user_id"));
-  const getPhotosByUser = useFavoritesStore((state) =>
-    state.getPhotosByUser
-  );
 
-  const favoritePhotos = getPhotosByUser(currentUserId); 
+  const favoritePhotos =
+    useFavoritesStore((state) => state.favoritesByUser[currentUserId]) || [];
 
   const addPhoto = useFavoritesStore((state) => state.addPhoto);
   const removePhoto = useFavoritesStore((state) => state.removePhoto);
 
   const isPhotoFavorite = (photoId: number) => {
-    return favoritePhotos.some((p) => p.id === photoId && p.userId === currentUserId);
-  }; 
+    return favoritePhotos.some((p) => p.id === photoId);
+  };
+
+  const isCheckUser = (uid: number) => {
+    return favoritePhotos.some((p) => p.userId === uid);
+  };
 
   return (
     <Container className="my-4">
@@ -70,14 +72,14 @@ function AlbumDetailPage() {
       <Row xs={1} sm={2} md={3} lg={4} className="g-3">
         {photos.map((photo) => {
           const isFav = isPhotoFavorite(photo.id);
-
+          const isCurrentAccount = isCheckUser(photo.userId);
           const toggleFavorite = () => {
             if (isFav) {
               console.log(isFav);
               removePhoto(photo.id, currentUserId);
             } else {
-              console.log({ ...photo, userId: currentUserId });
-              addPhoto({ ...photo, userId: currentUserId }, currentUserId);
+              addPhoto(photo, currentUserId);
+              console.log("selam", { ...photo, userId: currentUserId });
             }
           };
 
@@ -97,11 +99,11 @@ function AlbumDetailPage() {
                     variant="link"
                     onClick={toggleFavorite}
                     style={{
-                      color: isFav ? "red" : "gray",
+                      color: isFav && isCurrentAccount ? "red" : "gray",
                       fontSize: "1.5rem",
                     }}
                   >
-                    {isFav ? "♥" : "♡"}
+                    {isFav && isCurrentAccount ? "♥" : "♡"}
                   </Button>
                 </Card.Body>
               </Card>

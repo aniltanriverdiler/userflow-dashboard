@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface Photo {
+export interface Photo {
   id: number;
   title: string;
   url: string;
