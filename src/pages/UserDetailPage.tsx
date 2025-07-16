@@ -1,16 +1,9 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Row,
-  Spinner,
-  Tab,
-  Tabs,
-} from "react-bootstrap";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { useFavoritesStore } from "../store/favoritesStore";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface User {
   id: number;
@@ -48,49 +41,35 @@ interface Todo {
 }
 
 function UserDetailPage() {
+  const user = useLoaderData() as User;
   const favoritePosts = useFavoritesStore((state) => state.posts);
   const addPost = useFavoritesStore((state) => state.addPost);
   const removePost = useFavoritesStore((state) => state.removePost);
-
-  const user = useLoaderData() as User;
-
   const [activeTab, setActiveTab] = useState("posts");
   const [tabData, setTabData] = useState<(Post | Album | Todo)[]>([]);
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
 
-  const handleSelect = (key: string | null) => {
-    if (key === "edit-posts") {
-      navigate(`/users/${user.id}/draggable-posts`);
-    } else if (key === "edit-albums") {
+  const handleSelect = (key: string) => {
+    if (key === "edit-posts") navigate(`/users/${user.id}/draggable-posts`);
+    else if (key === "edit-albums")
       navigate(`/users/${user.id}/draggable-albums`);
-    } else {
-      setActiveTab(key as string);
-    }
+    else setActiveTab(key);
   };
 
   useEffect(() => {
-    if (!user?.id) return;
-
     const fetchData = async () => {
+      if (!user?.id) return;
       setLoading(true);
-      let url = "";
 
-      switch (activeTab) {
-        case "posts":
-          url = `https://jsonplaceholder.typicode.com/users/${user.id}/posts`;
-          break;
-        case "albums":
-          url = `https://jsonplaceholder.typicode.com/users/${user.id}/albums`;
-          break;
-        case "todos":
-          url = `https://jsonplaceholder.typicode.com/users/${user.id}/todos`;
-          break;
-      }
+      const urls = {
+        posts: `https://jsonplaceholder.typicode.com/users/${user.id}/posts`,
+        albums: `https://jsonplaceholder.typicode.com/users/${user.id}/albums`,
+        todos: `https://jsonplaceholder.typicode.com/users/${user.id}/todos`,
+      };
 
-      const response = await fetch(url);
-      const data = await response.json();
+      const res = await fetch(urls[activeTab as keyof typeof urls]);
+      const data = await res.json();
       setTabData(data);
       setLoading(false);
     };
@@ -98,153 +77,160 @@ function UserDetailPage() {
     fetchData();
   }, [activeTab, user]);
 
-  // Kullanıcı detayına girildiğinde current_user_id olarak localStorage'a yaz
   useEffect(() => {
     if (user?.id) {
       localStorage.setItem("current_user_id", String(user.id));
-      // Aynı sekmede AppNavbar'ın state'ini güncellemek için custom event dispatch et
       window.dispatchEvent(new Event("current_user_id_change"));
     }
   }, [user?.id]);
 
   return (
-    <Container className="my-4">
-      <Card>
-        <Card.Header as="h3">{user.name}</Card.Header>
-        <Card.Body>
-          <Card.Title>@{user.username}</Card.Title>
-          <Card.Text>
-            <strong>Email:</strong> {user.email} <br />
-            <strong>Phone:</strong> {user.phone} <br />
-            <strong>Website:</strong> <br />
-            <a href={`http://${user.website}`} target="_blank" rel="noreferrer">
+    <div className="container mx-auto px-4 py-6 space-y-6">
+      <Card className="p-5 space-y-3">
+        <h2 className="text-2xl font-bold">{user.name}</h2>
+        <p className="text-muted-foreground">@{user.username}</p>
+        <div className="text-sm space-y-1">
+          <p>
+            <strong>Email:</strong> {user.email}
+          </p>
+          <p>
+            <strong>Phone:</strong> {user.phone}
+          </p>
+          <p>
+            <strong>Website:</strong>{" "}
+            <a
+              href={`http://${user.website}`}
+              className="underline"
+              target="_blank"
+              rel="noreferrer"
+            >
               {user.website}
             </a>
-            <br />
+          </p>
+          <p>
             <strong>Company:</strong> {user.company.name}
-            <br />
+          </p>
+          <p>
             <strong>Address:</strong>{" "}
             {`${user.address.suite}, ${user.address.street}, ${user.address.city}, ${user.address.zipcode}`}
-          </Card.Text>
-          <Link to="/users">
-            <Button variant="primary">Go Back</Button>
-          </Link>
-        </Card.Body>
-        <Tabs
-          activeKey={activeTab}
-          onSelect={handleSelect}
-          id="user-tabs"
-          className="mt-4"
-        >
-          <Tab eventKey="posts" title="Posts">
-            {loading && <Spinner animation="border" variant="primary" />}
-            {!loading && (
-              <Row xs={1} md={2} lg={3} className="g-3 p-3">
-                {tabData.filter((item): item is Post => 'body' in item).map((post) => {
+          </p>
+        </div>
+        <Link to="/users">
+          <Button>← Go Back</Button>
+        </Link>
+      </Card>
+
+      <Tabs value={activeTab} onValueChange={handleSelect} className="w-full">
+        <TabsList className="grid grid-cols-5">
+          <TabsTrigger value="posts">Posts</TabsTrigger>
+          <TabsTrigger value="albums">Albums</TabsTrigger>
+          <TabsTrigger value="todos">Todos</TabsTrigger>
+          <TabsTrigger value="edit-posts">Edit Posts</TabsTrigger>
+          <TabsTrigger value="edit-albums">Edit Albums</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="posts">
+          {loading ? (
+            <p className="text-center my-4">Loading...</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+              {tabData
+                .filter(
+                  (item): item is Post => "title" in item && "userId" in item
+                )
+                .map((post) => {
                   const isFav = favoritePosts.some((p) => p.id === post.id);
                   const toggle = () => {
-                    if (isFav) {
-                      removePost(post.id);
-                    } else {
-                      const postWithBody = post as Post;
-                      addPost({ ...postWithBody, userId: user.id, body: postWithBody.body ?? "" });
-                    }
+                    if (isFav) removePost(post.id);
+                    else
+                      addPost({
+                        ...post,
+                        body: post.body ?? "",
+                        userId: user.id,
+                      });
                   };
+
                   return (
-                    <Col key={post.id}>
-                      <Card className="h-100">
-                        <Card.Body>
-                          <Card.Title>{post.title}</Card.Title>
-                          <Card.Text>
-                            <strong>User ID:</strong> {post.userId} <br />
-                            <strong>Post ID:</strong> {post.id}
-                          </Card.Text>
-                          <div className="d-flex justify-content-between align-items-center">
-                            <Link to={`/users/${post.userId}/posts/${post.id}`}>
-                              <Button variant="outline-primary" size="sm">
-                                Comment Details
-                              </Button>
-                            </Link>
-                            <Button
-                              variant="link"
-                              onClick={toggle}
-                              style={{
-                                color: isFav ? "red" : "gray",
-                                fontSize: "1.3rem",
-                              }}
-                            >
-                              {isFav ? "♥" : "♡"}
-                            </Button>
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </Col>
+                    <Card key={post.id} className="p-4 space-y-2 h-full">
+                      <h3 className="font-semibold">{post.title}</h3>
+                      <p className="text-sm">Post ID: {post.id}</p>
+                      <div className="flex justify-between items-center">
+                        <Link to={`/users/${post.userId}/posts/${post.id}`}>
+                          <Button variant="outline" size="sm">
+                            Comment Details
+                          </Button>
+                        </Link>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={toggle}
+                          className={isFav ? "text-red-500" : "text-gray-400"}
+                        >
+                          {isFav ? "♥" : "♡"}
+                        </Button>
+                      </div>
+                    </Card>
                   );
                 })}
-              </Row>
-            )}
-          </Tab>
+            </div>
+          )}
+        </TabsContent>
 
-          <Tab eventKey="albums" title="Albums">
-            {loading && <Spinner animation="border" variant="success" />}
-            {!loading && (
-              <div className="d-flex flex-column gap-3 p-3">
-                {tabData.filter((item): item is Album => !('body' in item) && !('completed' in item)).map((album) => (
-                  <Card key={album.id}>
-                    <Card.Body>
-                      <Card.Title>{album.title}</Card.Title>
-                      <Card.Text>
-                        <strong>User ID:</strong> {user.id} <br />
-                        <strong>Album ID:</strong> {album.id} <br />
-                      </Card.Text>
-                      <Link to={`/users/${user.id}/albums/${album.id}`}>
-                        <Button variant="primary" size="sm">
-                          Album Details
-                        </Button>
-                      </Link>
-                    </Card.Body>
+        <TabsContent value="albums">
+          {loading ? (
+            <p className="text-center my-4">Loading...</p>
+          ) : (
+            <div className="flex flex-col gap-4 mt-4">
+              {tabData
+                .filter(
+                  (item): item is Album =>
+                    "title" in item && !("completed" in item)
+                )
+                .map((album) => (
+                  <Card key={album.id} className="p-4">
+                    <h4 className="font-semibold">{album.title}</h4>
+                    <p className="text-sm">Album ID: {album.id}</p>
+                    <Link to={`/users/${user.id}/albums/${album.id}`}>
+                      <Button size="sm">Album Details</Button>
+                    </Link>
                   </Card>
                 ))}
-              </div>
-            )}
-          </Tab>
+            </div>
+          )}
+        </TabsContent>
 
-          <Tab eventKey="todos" title="Todos">
-            {loading && <Spinner animation="border" variant="warning" />}
-            {!loading && (
-              <Row xs={1} sm={2} md={3} className="g-3 p-3">
-                {tabData.filter((item): item is Todo => 'completed' in item).map((todo) => (
-                  <Col key={todo.id}>
-                    <Card
-                      border={todo.completed ? "success" : "danger"}
-                      className="h-100"
-                    >
-                      <Card.Body>
-                        <Card.Title>{todo.title}</Card.Title>
-                        <Card.Text>
-                          <strong>User ID:</strong> {user.id} <br />
-                          <strong>Todo ID:</strong> {todo.id} <br />
-                          <strong>Status:</strong>{" "}
-                          {todo.completed ? (
-                            <span className="text-success">Completed ✅</span>
-                          ) : (
-                            <span className="text-danger">Incomplete ❌</span>
-                          )}
-                        </Card.Text>
-                      </Card.Body>
-                    </Card>
-                  </Col>
+        <TabsContent value="todos">
+          {loading ? (
+            <p className="text-center my-4">Loading...</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+              {tabData
+                .filter((item): item is Todo => "completed" in item)
+                .map((todo) => (
+                  <Card
+                    key={todo.id}
+                    className={`p-4 border-l-4 ${
+                      todo.completed ? "border-green-500" : "border-red-500"
+                    }`}
+                  >
+                    <h5 className="font-medium">{todo.title}</h5>
+                    <p className="text-sm">
+                      Status:{" "}
+                      <span
+                        className={
+                          todo.completed ? "text-green-600" : "text-red-600"
+                        }
+                      >
+                        {todo.completed ? "Completed ✅" : "Incomplete ❌"}
+                      </span>
+                    </p>
+                  </Card>
                 ))}
-              </Row>
-            )}
-          </Tab>
-
-          <Tab eventKey="edit-posts" title="Edit Posts" />
-
-          <Tab eventKey="edit-albums" title="Edit Albums" />
-        </Tabs>
-      </Card>
-    </Container>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
 

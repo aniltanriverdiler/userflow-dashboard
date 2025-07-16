@@ -1,61 +1,58 @@
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 function HomePage() {
   return (
-    <Container className="my-5">
-      <header className="text-center mb-5">
-        <h1>UserFlow Dashboard</h1>
-        <p className="lead">
+    <div className="container mx-auto my-10 px-4">
+      <header className="text-center mb-10">
+        <h1 className="text-4xl font-bold mb-2">UserFlow Dashboard</h1>
+        <p className="text-lg text-gray-600">
           Manage users, posts, albums and your favorites with ease.
         </p>
       </header>
 
       {/* Description Cards */}
-      <Row className="mb-5">
-        <Col md={4}>
-          <Card className="h-100 text-center shadow-sm">
-            <Card.Body>
-              <h4>👤 Users</h4>
-              <p>Explore user profiles, their posts, albums and todos.</p>
-              <Link to="/users">
-                <Button variant="primary" size="sm">
-                  View Users
-                </Button>
-              </Link>
-            </Card.Body>
-          </Card>
-        </Col>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Users */}
+        <div className="bg-white dark:bg-gray-900 shadow-md rounded-2xl p-6 text-center space-y-4">
+          <h4 className="text-xl font-semibold">👤 Users</h4>
+          <p className="text-gray-600 dark:text-gray-300 mb-3">
+            Explore user profiles, their posts, albums and todos.
+          </p>
+          <Link to="/users">
+            <Button variant="default" size="sm">
+              View Users
+            </Button>
+          </Link>
+        </div>
 
-        <Col md={4}>
-          <Card className="h-100 text-center shadow-sm">
-            <Card.Body>
-              <h4>📷 Albums</h4>
-              <p>Browse through photo albums and mark your favorites.</p>
-              <Link to="/favorites/photos">
-                <Button variant="success" size="sm">
-                  View Albums
-                </Button>
-              </Link>
-            </Card.Body>
-          </Card>
-        </Col>
+        {/* Albums */}
+        <div className="bg-white dark:bg-gray-900 shadow-md rounded-2xl p-6 text-center space-y-4">
+          <h4 className="text-xl font-semibold">📷 Albums</h4>
+          <p className="text-gray-600 dark:text-gray-300 mb-3">
+            Browse through photo albums and mark your favorites.
+          </p>
+          <Link to="/favorites/photos">
+            <Button variant="secondary" size="sm">
+              View Albums
+            </Button>
+          </Link>
+        </div>
 
-        <Col md={4}>
-          <Card className="h-100 text-center shadow-sm">
-            <Card.Body>
-              <h4>❤️ Favorites</h4>
-              <p>Access your favorite posts and photos anytime.</p>
-              <Link to="/favorites/posts">
-                <Button variant="danger" size="sm">
-                  View Favorites
-                </Button>
-              </Link>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+        {/* Favorites  */}
+        <div className="bg-white dark:bg-gray-900 shadow-md rounded-2xl p-6 text-center space-y-4">
+          <h4 className="text-xl font-semibold">❤️ Favorites</h4>
+          <p className="text-gray-600 dark:text-gray-300 mb-3">
+            Access your favorite posts and photos anytime.
+          </p>
+          <Link to="/favorites/posts">
+            <Button variant="destructive" size="sm">
+              View Favorites
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }
 

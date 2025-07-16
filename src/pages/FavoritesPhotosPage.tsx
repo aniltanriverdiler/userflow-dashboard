@@ -1,15 +1,8 @@
 import { useEffect, useState } from "react";
 import { useFavoritesStore, type Photo } from "../store/favoritesStore";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardText,
-  Col,
-  Container,
-  Row,
-} from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 function FavoritesPhotosPage() {
   const currentUserId = Number(localStorage.getItem("current_user_id"));
@@ -28,56 +21,58 @@ function FavoritesPhotosPage() {
 
   if (!currentUserId) {
     return (
-      <Container className="my-4">
-        <p>No user selected. Please log in or choose a user.</p>
-      </Container>
+      <div className="container mx-auto px-4 py-6">
+        <p className="text-gray-600">
+          No user selected. Please log in or choose a user.
+        </p>
+      </div>
     );
   }
 
   if (!hasHydrated) {
     return (
-      <Container className="my-4">
-        <p>Loading favorites...</p>
-      </Container>
+      <div className="container mx-auto px-4 py-6">
+        <p className="text-gray-600">Loading favorites...</p>
+      </div>
     );
   }
 
   return (
-    <Container className="my-4">
-      <h2>Favorite Photos</h2>
+    <div className="container mx-auto px-4 py-6">
+      <h2 className="text-2xl font-semibold mb-4">Favorite Photos</h2>
       {photos.length === 0 ? (
-        <p>You don't have any favorite photos yet.</p>
+        <p className="text-gray-600">You don't have any favorite photos yet.</p>
       ) : (
-        <Row xs={1} sm={2} md={3} lg={4} className="g-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {photos.map((photo) => (
-            <Col key={photo.id}>
-              <Card>
-                <Card.Img variant="top" src={photo.thumbnailUrl} />
-                <CardBody>
-                  <CardText className="text-truncate" title={photo.title}>
-                    {photo.title}
-                  </CardText>
-                  <div className="d-flex justify-content-between">
-                    <Link to={`/users/${photo.userId}/albums/${photo.albumId}`}>
-                      <Button variant="primary" size="sm">
-                        Go to Album
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
-                      onClick={() => removePhoto(photo.id, currentUserId)}
-                    >
-                      ♥ Remove
-                    </Button>
-                  </div>
-                </CardBody>
-              </Card>
-            </Col>
+            <Card key={photo.id} className="overflow-hidden">
+              <img
+                src={photo.thumbnailUrl}
+                alt={photo.title}
+                className="w-full h-auto"
+              />
+              <div className="p-4 space-y-2">
+                <p className="text-sm font-medium truncate" title={photo.title}>
+                  {photo.title}
+                </p>
+                <div className="flex justify-between gap-2">
+                  <Link to={`/users/${photo.userId}/albums/${photo.albumId}`}>
+                    <Button size="sm">Go to Album</Button>
+                  </Link>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => removePhoto(photo.id, currentUserId)}
+                  >
+                    ♥ Remove
+                  </Button>
+                </div>
+              </div>
+            </Card>
           ))}
-        </Row>
+        </div>
       )}
-    </Container>
+    </div>
   );
 }
 

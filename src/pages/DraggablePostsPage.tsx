@@ -6,13 +6,15 @@ import {
   Draggable,
   type DropResult,
 } from "@hello-pangea/dnd";
+
+import { Button } from "@/components/ui/button";
 import {
-  Button,
-  Card,
-  Container,
-  Modal,
-  Spinner,
-} from "react-bootstrap";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 interface Post {
   id: number;
@@ -64,15 +66,17 @@ function DraggablePostsPage() {
 
   if (loading) {
     return (
-      <Container className="text-center my-5">
-        <Spinner animation="border" variant="primary" />
-      </Container>
+      <div className="flex justify-center items-center h-64">
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
     );
   }
 
   return (
-    <Container className="px-5 m-5">
-      <h2 className="text-center mb-4">Drag & Drop to Reorder Posts</h2>
+    <div className="container mx-auto px-4 py-6">
+      <h2 className="text-center text-2xl font-semibold mb-6">
+        Drag & Drop to Reorder Posts
+      </h2>
 
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="posts">
@@ -80,7 +84,7 @@ function DraggablePostsPage() {
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className="d-flex flex-column gap-3"
+              className="space-y-4"
             >
               {posts.map((post, index) => (
                 <Draggable
@@ -93,17 +97,13 @@ function DraggablePostsPage() {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
+                      className="bg-white dark:bg-gray-900 shadow-md rounded-xl p-4"
                     >
-                      <Card>
-                        <Card.Body>
-                          <Card.Title>{post.title}</Card.Title>
-                          <Card.Text>
-                            <strong>User ID:</strong> {post.userId}
-                            <br />
-                            <strong>Post ID:</strong> {post.id}
-                          </Card.Text>
-                        </Card.Body>
-                      </Card>
+                      <h4 className="text-lg font-medium mb-1">{post.title}</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                        <strong>User ID:</strong> {post.userId} <br />
+                        <strong>Post ID:</strong> {post.id}
+                      </p>
                     </div>
                   )}
                 </Draggable>
@@ -114,34 +114,33 @@ function DraggablePostsPage() {
         </Droppable>
       </DragDropContext>
 
-      <div className="text-center">
-        <Button variant="success" className="mt-4" onClick={handleSave}>
+      {/* Save & Back Buttons */}
+      <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-6">
+        <Button variant="default" onClick={handleSave}>
           Save Changes
         </Button>
-      </div>
 
-      <div className="mt-4">
         <Link to={`/users/${userId}`}>
           <Button variant="secondary">← Return to User Profile</Button>
         </Link>
       </div>
 
       {/* Modal */}
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Success!</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Post order has been saved successfully! (Note: Changes are not
-          permanent as this is a demo.)
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={() => setShowModal(false)}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </Container>
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Success!</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-500">
+            Post order has been saved successfully! (Note: Changes are not
+            permanent as this is a demo.)
+          </p>
+          <DialogFooter>
+            <Button onClick={() => setShowModal(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
 

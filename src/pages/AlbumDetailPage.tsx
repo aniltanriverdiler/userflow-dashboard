@@ -1,16 +1,7 @@
+import { Card } from "@/components/ui/card";
 import { useFavoritesStore } from "../store/favoritesStore";
-
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  CardText,
-  Col,
-  Container,
-  Row,
-} from "react-bootstrap";
 import { Link, useLoaderData } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 interface Album {
   id: number;
@@ -56,20 +47,23 @@ function AlbumDetailPage() {
   };
 
   return (
-    <Container className="my-4">
-      <Card className="mb-4">
-        <CardHeader as="h4" className="text-truncate">
-          {album.title}
-        </CardHeader>
-        <CardBody>
-          <CardText>
-            <strong>Owner:</strong>{" "}
-            <Link to={`/users/${user.id}`}>{user.name}</Link>
-          </CardText>
-        </CardBody>
+    <div className="container mx-auto px-4 py-6">
+      {/* Album Info Card */}
+      <Card className="mb-6 p-4">
+        <h4 className="text-xl font-semibold mb-2 truncate">{album.title}</h4>
+        <p className="text-gray-600">
+          <strong>Owner:</strong>{" "}
+          <Link
+            to={`/users/${user.id}`}
+            className="underline text-blue-600 hover:text-blue-800"
+          >
+            {user.name}
+          </Link>
+        </p>
       </Card>
 
-      <Row xs={1} sm={2} md={3} lg={4} className="g-3">
+      {/* Photos Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {photos.map((photo) => {
           const isFav = isPhotoFavorite(photo.id);
           const isCurrentAccount = isCheckUser(photo.userId);
@@ -82,40 +76,40 @@ function AlbumDetailPage() {
           };
 
           return (
-            <Col key={photo.id}>
-              <Card>
-                <Card.Img variant="top" src={photo.thumbnailUrl} />
-                <Card.Body className="d-flex justify-content-between align-items-center">
-                  <Card.Text
-                    className="me-2 text-truncate"
-                    title={photo.title}
-                    style={{ maxWidth: "150px" }}
-                  >
-                    {photo.title}
-                  </Card.Text>
-                  <Button
-                    variant="link"
-                    onClick={toggleFavorite}
-                    style={{
-                      color: isFav && isCurrentAccount ? "red" : "gray",
-                      fontSize: "1.5rem",
-                    }}
-                  >
-                    {isFav && isCurrentAccount ? "♥" : "♡"}
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
+            <Card key={photo.id} className="overflow-hidden">
+              <img
+                src={photo.thumbnailUrl}
+                alt={photo.title}
+                className="w-full auto"
+              />
+              <div className="flex items-center justify-between px-4 py-3">
+                <p
+                  className="truncate text-sm font-medium max-w-[150px]"
+                  title={photo.title}
+                >
+                  {photo.title}
+                </p>
+                <button
+                  onClick={toggleFavorite}
+                  className={`text-xl transition ${
+                    isFav && isCurrentAccount ? "text-red-500" : "text-gray-400"
+                  }`}
+                >
+                  {isFav && isCurrentAccount ? "♥" : "♡"}
+                </button>
+              </div>
+            </Card>
           );
         })}
-      </Row>
+      </div>
 
-      <div className="mt-4">
+      {/* Back Button */}
+      <div className="mt-6">
         <Link to={`/users/${user.id}`}>
           <Button variant="secondary">← Return to User Profile</Button>
         </Link>
       </div>
-    </Container>
+    </div>
   );
 }
 

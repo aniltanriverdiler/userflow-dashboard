@@ -1,4 +1,5 @@
-import { Button, Card, Container } from "react-bootstrap";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Link, useLoaderData } from "react-router-dom";
 
 interface Post {
@@ -28,39 +29,40 @@ function PostDetailPage() {
   };
 
   return (
-    <Container className="my-4">
-      <Card className="mb-4">
-        <Card.Header as="h4">{post.title}</Card.Header>
-        <Card.Body>
-          <Card.Text>{post.body}</Card.Text>
-          <Card.Text>
-            <strong>Author:</strong>{" "}
-            <Link to={`/user/${user.id}`}>{user.name}</Link>
-          </Card.Text>
-        </Card.Body>
+    <div className="container mx-auto px-4 py-6 space-y-6">
+      {/* Post Card */}
+      <Card className="p-4 space-y-2">
+        <h4 className="text-xl font-semibold">{post.title}</h4>
+        <p className="text-gray-700 dark:text-gray-300">{post.body}</p>
+        <p className="text-sm text-muted-foreground">
+          <strong>Author:</strong>{" "}
+          <Link to={`/users/${user.id}`} className="underline">
+            {user.name}
+          </Link>
+        </p>
       </Card>
 
-      <h5>Comments</h5>
-      <div className="d-flex flex-column gap-3">
-        {comments.map((comment) => (
-          <Card key={comment.id}>
-            <Card.Body>
-              <Card.Title>{comment.name}</Card.Title>
-              <Card.Subtitle className="mb-2 text-muted">
-                {comment.email}
-              </Card.Subtitle>
-              <Card.Text>{comment.body}</Card.Text>
-            </Card.Body>
-          </Card>
-        ))}
+      {/* Comment Section */}
+      <div>
+        <h5 className="text-lg font-medium mb-4">Comment</h5>
+        <div className="flex flex-col gap-4">
+          {comments.map((comment) => (
+            <Card key={comment.id} className="p-4">
+              <h6 className="text-md font-semibold">{comment.name}</h6>
+              <p className="text-sm text-gray-500 mb-1">{comment.email}</p>
+              <p className="text-sm">{comment.body}</p>
+            </Card>
+          ))}
+        </div>
       </div>
 
-      <div className="mt-4">
+      {/* Return Button */}
+      <div>
         <Link to={`/users/${user.id}`}>
           <Button variant="secondary">← Return to User Profile</Button>
         </Link>
       </div>
-    </Container>
+    </div>
   );
 }
 

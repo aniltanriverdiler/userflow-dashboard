@@ -1,5 +1,6 @@
-import { Card, Col, Container, Row } from "react-bootstrap";
-import { Link, useLoaderData } from "react-router-dom";
+import { useLoaderData, Link } from "react-router-dom";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface User {
   id: number;
@@ -23,37 +24,42 @@ function UsersPage() {
   const users = useLoaderData() as User[];
 
   return (
-    <Container>
-      <h1 className="mb-4">Users</h1>
-      <Row>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Users</h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {users.map((user) => (
-          <Col key={user.id} md={4} className="mb-4">
-            <Card>
-              <Card.Body className="text-center">
-                <Card.Title>{user.name}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">
-                  @{user.username}
-                </Card.Subtitle>
-                <Card.Text>
-                  <strong>Email:</strong> {user.email} <br />
-                  <strong>Phone:</strong> {user.phone} <br />
-                  <strong>Company:</strong> {user.company.name} <br />
-                  <strong>Address:</strong> {user.address.city} <br />
-                </Card.Text>
-              </Card.Body>
-              <div className="d-flex justify-content-center mb-3">
-              <Link
-                to={`/users/${user.id}`}
-                className="btn btn-outline-primary btn-sm col-3"
-              >
-                View Details
-              </Link>
+          <Card key={user.id} className="p-5 flex flex-col justify-between">
+            <div className="text-center space-y-2">
+              <h2 className="text-lg font-semibold">{user.name}</h2>
+              <p className="text-muted-foreground">@{user.username}</p>
+              <div className="text-sm text-left mt-3">
+                <p>
+                  <strong>Email:</strong> {user.email}
+                </p>
+                <p>
+                  <strong>Phone:</strong> {user.phone}
+                </p>
+                <p>
+                  <strong>Company:</strong> {user.company.name}
+                </p>
+                <p>
+                  <strong>City:</strong> {user.address.city}
+                </p>
               </div>
-            </Card>
-          </Col>
+            </div>
+
+            <div className="mt-5 flex justify-center">
+              <Link to={`/users/${user.id}`}>
+                <Button variant="outline" size="sm">
+                  View Details
+                </Button>
+              </Link>
+            </div>
+          </Card>
         ))}
-      </Row>
-    </Container>
+      </div>
+    </div>
   );
 }
 
