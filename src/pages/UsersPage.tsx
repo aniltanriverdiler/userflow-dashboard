@@ -21,7 +21,6 @@ interface User {
 }
 
 function getAvatarColor(name: string) {
-  // Maskülen, soft renkler
   const colors = [
     "bg-primary/90",
     "bg-secondary/80",

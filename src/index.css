@@ -4,21 +4,21 @@
 
 @layer base {
   :root {
-    --background: 220 15% 98%; /* çok açık gri-beyaz */
-    --foreground: 220 20% 10%; /* koyu lacivert */
-    --card: 220 13% 96%; /* açık gri */
+    --background: 220 15% 98%; 
+    --foreground: 220 20% 10%; 
+    --card: 220 13% 96%; 
     --card-foreground: 220 20% 10%;
     --popover: 220 13% 96%;
     --popover-foreground: 220 20% 10%;
-    --primary: 220 40% 22%; /* lacivert */
+    --primary: 220 40% 22%;
     --primary-foreground: 210 20% 98%;
-    --secondary: 210 10% 30%; /* antrasit */
+    --secondary: 210 10% 30%;
     --secondary-foreground: 210 20% 98%;
     --muted: 220 10% 85%;
     --muted-foreground: 220 8% 40%;
-    --accent: 160 20% 35%; /* soft koyu yeşil */
+    --accent: 160 20% 35%; 
     --accent-foreground: 210 20% 98%;
-    --destructive: 0 70% 40%; /* koyu kırmızı */
+    --destructive: 0 70% 40%; 
     --destructive-foreground: 210 20% 98%;
     --border: 220 10% 85%;
     --input: 220 10% 85%;
@@ -26,9 +26,9 @@
     --radius: 0.5rem;
   }
   .dark {
-    --background: 220 20% 10%; /* gece mavisi */
+    --background: 220 20% 10%; 
     --foreground: 210 20% 98%;
-    --card: 220 25% 14%; /* koyu antrasit */
+    --card: 220 25% 14%; 
     --card-foreground: 210 20% 98%;
     --popover: 220 25% 14%;
     --popover-foreground: 210 20% 98%;

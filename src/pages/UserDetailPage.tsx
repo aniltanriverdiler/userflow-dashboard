@@ -71,7 +71,6 @@ function UserDetailPage() {
 
       const res = await fetch(urls[activeTab as keyof typeof urls]);
       let data = await res.json();
-      // Eğer posts tabındaysak, body alanı eksikse ekle
       if (activeTab === 'posts') {
         data = data.map((post: { id: number; title: string; userId: number; body?: string }) => ({ ...post, body: typeof post.body === 'string' ? post.body : '' }));
       }
