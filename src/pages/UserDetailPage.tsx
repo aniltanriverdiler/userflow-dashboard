@@ -4,6 +4,7 @@ import { useFavoritesStore } from "../store/favoritesStore";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Post as PostType } from "../store/favoritesStore";
 
 interface User {
   id: number;
@@ -69,7 +70,11 @@ function UserDetailPage() {
       };
 
       const res = await fetch(urls[activeTab as keyof typeof urls]);
-      const data = await res.json();
+      let data = await res.json();
+      // Eğer posts tabındaysak, body alanı eksikse ekle
+      if (activeTab === 'posts') {
+        data = data.map((post: { id: number; title: string; userId: number; body?: string }) => ({ ...post, body: typeof post.body === 'string' ? post.body : '' }));
+      }
       setTabData(data);
       setLoading(false);
     };
@@ -85,11 +90,27 @@ function UserDetailPage() {
   }, [user?.id]);
 
   return (
-    <div className="container mx-auto px-4 py-6 space-y-6">
-      <Card className="p-5 space-y-3">
-        <h2 className="text-2xl font-bold">{user.name}</h2>
-        <p className="text-muted-foreground">@{user.username}</p>
-        <div className="text-sm space-y-1">
+    <div className="container mx-auto px-2 sm:px-4 py-6 space-y-8">
+      <Card className="p-7 space-y-4 bg-card rounded-2xl shadow-lg border border-border">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white shadow border-4 border-background bg-primary/90`}>
+              {user.name[0]}
+            </div>
+            <div>
+              <h2 className="text-2xl font-extrabold text-primary mb-1">{user.name}</h2>
+              <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-muted text-primary shadow-none">
+                @{user.username}
+              </span>
+            </div>
+          </div>
+          <Link to="/users">
+            <Button variant="outline" className="font-bold">
+              ← Go Back
+            </Button>
+          </Link>
+        </div>
+        <div className="text-sm space-y-1 mt-4">
           <p>
             <strong>Email:</strong> {user.email}
           </p>
@@ -100,7 +121,7 @@ function UserDetailPage() {
             <strong>Website:</strong>{" "}
             <a
               href={`http://${user.website}`}
-              className="underline"
+              className="underline text-accent hover:text-primary transition"
               target="_blank"
               rel="noreferrer"
             >
@@ -108,65 +129,76 @@ function UserDetailPage() {
             </a>
           </p>
           <p>
-            <strong>Company:</strong> {user.company.name}
+            <strong>Company:</strong> <span className="font-semibold text-accent">{user.company.name}</span>
           </p>
           <p>
             <strong>Address:</strong>{" "}
             {`${user.address.suite}, ${user.address.street}, ${user.address.city}, ${user.address.zipcode}`}
           </p>
         </div>
-        <Link to="/users">
-          <Button>← Go Back</Button>
-        </Link>
       </Card>
 
       <Tabs value={activeTab} onValueChange={handleSelect} className="w-full">
-        <TabsList className="grid grid-cols-5">
-          <TabsTrigger value="posts">Posts</TabsTrigger>
-          <TabsTrigger value="albums">Albums</TabsTrigger>
-          <TabsTrigger value="todos">Todos</TabsTrigger>
-          <TabsTrigger value="edit-posts">Edit Posts</TabsTrigger>
-          <TabsTrigger value="edit-albums">Edit Albums</TabsTrigger>
+        <TabsList className="flex justify-center items-center gap-1 bg-muted rounded-xl shadow px-1 py-0.5 mx-auto w-fit">
+          <TabsTrigger value="posts" className="flex items-center gap-1 text-sm font-semibold text-primary px-3 py-1.5 rounded-md data-[state=active]:bg-background data-[state=active]:text-accent transition-all">
+            📝 Posts
+          </TabsTrigger>
+          <TabsTrigger value="albums" className="flex items-center gap-1 text-sm font-semibold text-primary px-3 py-1.5 rounded-md data-[state=active]:bg-background data-[state=active]:text-accent transition-all">
+            📷 Albums
+          </TabsTrigger>
+          <TabsTrigger value="todos" className="flex items-center gap-1 text-sm font-semibold text-primary px-3 py-1.5 rounded-md data-[state=active]:bg-background data-[state=active]:text-accent transition-all">
+            ✅ Todos
+          </TabsTrigger>
+          <TabsTrigger value="edit-posts" className="flex items-center gap-1 text-sm font-semibold text-primary px-3 py-1.5 rounded-md data-[state=active]:bg-background data-[state=active]:text-accent transition-all">
+            ✏️ Edit Posts
+          </TabsTrigger>
+          <TabsTrigger value="edit-albums" className="flex items-center gap-1 text-sm font-semibold text-primary px-3 py-1.5 rounded-md data-[state=active]:bg-background data-[state=active]:text-accent transition-all">
+            🛠️ Edit Albums
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="posts">
           {loading ? (
             <p className="text-center my-4">Loading...</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
               {tabData
                 .filter(
-                  (item): item is Post => "title" in item && "userId" in item
+                  (item): item is PostType => "title" in item && "userId" in item
                 )
                 .map((post) => {
+                  const typedPost = post as PostType;
                   const isFav = favoritePosts.some((p) => p.id === post.id);
                   const toggle = () => {
                     if (isFav) removePost(post.id);
-                    else
+                    else {
                       addPost({
-                        ...post,
-                        body: post.body ?? "",
+                        ...typedPost,
                         userId: user.id,
                       });
+                    }
                   };
 
                   return (
-                    <Card key={post.id} className="p-4 space-y-2 h-full">
-                      <h3 className="font-semibold">{post.title}</h3>
-                      <p className="text-sm">Post ID: {post.id}</p>
-                      <div className="flex justify-between items-center">
+                    <Card key={post.id} className="p-5 space-y-2 h-full rounded-xl shadow border border-border bg-card group transition-transform hover:scale-[1.03] hover:shadow-lg">
+                      <h3 className="font-semibold text-lg text-primary flex items-center gap-2">
+                        📝 {post.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">Post ID: {post.id}</p>
+                      <div className="flex justify-between items-center mt-2">
                         <Link to={`/users/${post.userId}/posts/${post.id}`}>
-                          <Button variant="outline" size="sm">
-                            Comment Details
+                          <Button variant="outline" size="sm" className="font-bold">
+                            💬 Comment Details
                           </Button>
                         </Link>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={toggle}
-                          className={isFav ? "text-red-500" : "text-gray-400"}
+                          className={`rounded-full text-2xl transition-all duration-200 ${isFav ? "text-accent scale-125" : "text-muted-foreground hover:text-accent hover:scale-110"}`}
+                          aria-label={isFav ? "Remove from favorites" : "Add to favorites"}
                         >
-                          {isFav ? "♥" : "♡"}
+                          {isFav ? "★" : "☆"}
                         </Button>
                       </div>
                     </Card>
@@ -187,11 +219,13 @@ function UserDetailPage() {
                     "title" in item && !("completed" in item)
                 )
                 .map((album) => (
-                  <Card key={album.id} className="p-4">
-                    <h4 className="font-semibold">{album.title}</h4>
-                    <p className="text-sm">Album ID: {album.id}</p>
+                  <Card key={album.id} className="p-4 rounded-xl shadow border border-border bg-card group transition-transform hover:scale-[1.03] hover:shadow-lg">
+                    <h4 className="font-semibold text-accent flex items-center gap-2">📷 {album.title}</h4>
+                    <p className="text-xs text-muted-foreground">Album ID: {album.id}</p>
                     <Link to={`/users/${user.id}/albums/${album.id}`}>
-                      <Button size="sm">Album Details</Button>
+                      <Button size="sm" className="font-bold mt-2" variant="outline">
+                        📸 Album Details
+                      </Button>
                     </Link>
                   </Card>
                 ))}
@@ -209,19 +243,13 @@ function UserDetailPage() {
                 .map((todo) => (
                   <Card
                     key={todo.id}
-                    className={`p-4 border-l-4 ${
-                      todo.completed ? "border-green-500" : "border-red-500"
-                    }`}
+                    className={`p-4 border-l-4 ${todo.completed ? "border-accent" : "border-secondary"} bg-card shadow border border-border`}
                   >
-                    <h5 className="font-medium">{todo.title}</h5>
+                    <h5 className="font-medium text-primary">{todo.title}</h5>
                     <p className="text-sm">
-                      Status:{" "}
-                      <span
-                        className={
-                          todo.completed ? "text-green-600" : "text-red-600"
-                        }
-                      >
-                        {todo.completed ? "Completed ✅" : "Incomplete ❌"}
+                      Status: {" "}
+                      <span className={todo.completed ? "text-accent" : "text-secondary"}>
+                        {todo.completed ? "Completed" : "Incomplete"}
                       </span>
                     </p>
                   </Card>

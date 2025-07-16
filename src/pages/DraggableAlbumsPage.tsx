@@ -74,10 +74,8 @@ function DraggableAlbumsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <h2 className="text-center text-2xl font-semibold mb-6">
-        Reorder Albums
-      </h2>
+    <div className="container mx-auto px-2 sm:px-4 py-8">
+      <h2 className="text-center text-2xl font-semibold mb-6 text-primary">Reorder Albums</h2>
 
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="albums">
@@ -98,12 +96,10 @@ function DraggableAlbumsPage() {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-4"
+                      className="bg-card shadow border border-border rounded-xl p-4 transition-transform hover:scale-[1.03] hover:shadow-lg"
                     >
-                      <h4 className="text-lg font-medium mb-1">
-                        {album.title}
-                      </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                      <h4 className="text-lg font-medium mb-1 text-primary">{album.title}</h4>
+                      <p className="text-sm text-muted-foreground">
                         <strong>User ID:</strong> {album.userId} <br />
                         <strong>Album ID:</strong> {album.id}
                       </p>
@@ -119,12 +115,12 @@ function DraggableAlbumsPage() {
 
       {/* Save + Back Buttons */}
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-6">
-        <Button variant="default" onClick={handleSave}>
+        <Button variant="default" onClick={handleSave} className="font-bold">
           Save Changes
         </Button>
 
         <Link to={`/users/${userId}`}>
-          <Button variant="secondary">← Return to User Profile</Button>
+          <Button variant="outline" className="font-bold">← Return to User Profile</Button>
         </Link>
       </div>
 
