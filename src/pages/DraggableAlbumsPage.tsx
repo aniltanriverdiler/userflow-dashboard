@@ -14,16 +14,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-interface Album {
-  id: number;
-  title: string;
-  userId: number;
-}
+import type { ApiAlbum } from "../types/types";
 
 function DraggableAlbumsPage() {
   const { userId } = useParams();
-  const [albums, setAlbums] = useState<Album[]>([]);
+  const [albums, setAlbums] = useState<ApiAlbum[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
@@ -75,52 +70,60 @@ function DraggableAlbumsPage() {
 
   return (
     <div className="container mx-auto px-2 sm:px-4 py-8">
-      <h2 className="text-center text-2xl font-semibold mb-6 text-primary">Reorder Albums</h2>
+      <h2 className="text-center text-2xl font-semibold mb-6 text-primary">
+        Reorder Albums
+      </h2>
 
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="albums">
-          {(provided) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              className="space-y-4"
-            >
-              {albums.map((album, index) => (
-                <Draggable
-                  key={album.id.toString()}
-                  draggableId={album.id.toString()}
-                  index={index}
-                >
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className="bg-card shadow border border-border rounded-xl p-4 transition-transform hover:scale-[1.03] hover:shadow-lg"
-                    >
-                      <h4 className="text-lg font-medium mb-1 text-primary">{album.title}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        <strong>User ID:</strong> {album.userId} <br />
-                        <strong>Album ID:</strong> {album.id}
-                      </p>
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <div className="max-w-2xl mx-auto w-full">
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="albums">
+            {(provided) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className="space-y-4"
+              >
+                {albums.map((album, index) => (
+                  <Draggable
+                    key={album.id.toString()}
+                    draggableId={album.id.toString()}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className="bg-card shadow border border-border rounded-xl p-4 transition-transform hover:scale-[1.03] hover:shadow-lg"
+                      >
+                        <h4 className="text-lg font-medium mb-1 text-primary">
+                          {album.title}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          <strong>User ID:</strong> {album.userId} <br />
+                          <strong>Album ID:</strong> {album.id}
+                        </p>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </div>
 
       {/* Save + Back Buttons */}
-      <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-6">
+      <div className="max-w-2xl mx-auto w-full flex flex-col md:flex-row items-center justify-center gap-4 mt-6">
         <Button variant="default" onClick={handleSave} className="font-bold">
           Save Changes
         </Button>
 
         <Link to={`/users/${userId}`}>
-          <Button variant="outline" className="font-bold">← Return to User Profile</Button>
+          <Button variant="outline" className="font-bold">
+            ← Return to User Profile
+          </Button>
         </Link>
       </div>
 

@@ -19,28 +19,53 @@ export const albumDetailLoader = async ({ params }: LoaderFunctionArgs) => {
   const album = await albumRes.json();
   const user = await userRes.json();
 
-  // Fetching from Unsplash API
-  const unsplashResponse = await fetch(
-    `https://api.unsplash.com/photos?page=1&per_page=10&query=nature&client_id=${
-      import.meta.env.VITE_UNSPLASH_ACCESS_KEY
-    }`
-  );
-
-  if (!unsplashResponse.ok) {
-    throw new Error("Failed to fetch Unsplash photos!");
+  // Try Unsplash first; if it fails or key missing, fallback to JSONPlaceholder
+  let photos: Array<{
+    id: number;
+    title: string;
+    url: string;
+    thumbnailUrl: string;
+    userId: number;
+    albumId: number;
+  }>;
+  const clientKey = (import.meta as any).env?.VITE_UNSPLASH_ACCESS_KEY;
+  try {
+    if (!clientKey) {
+      throw new Error("Missing Unsplash key");
+    }
+    const unsplashResponse = await fetch(
+      `https://api.unsplash.com/photos?page=1&per_page=12&query=nature&client_id=${clientKey}`
+    );
+    if (!unsplashResponse.ok) {
+      throw new Error("Failed to fetch Unsplash photos");
+    }
+    const unsplashPhotos = await unsplashResponse.json();
+    photos = unsplashPhotos.map((photo: any, index: number) => ({
+      id: index + 1,
+      title: photo.description || photo.alt_description || "Untitled",
+      url: photo.urls.full,
+      thumbnailUrl: photo.urls.thumb,
+      userId: Number(userId),
+      albumId: Number(albumId),
+    }));
+  } catch {
+    // Fallback: use JSONPlaceholder photos filtered by albumId
+    const phRes = await fetch(
+      `https://jsonplaceholder.typicode.com/albums/${albumId}/photos`
+    );
+    if (!phRes.ok) {
+      throw new Error("Failed to fetch fallback photos");
+    }
+    const ph = await phRes.json();
+    photos = ph.slice(0, 12).map((p: any) => ({
+      id: p.id,
+      title: p.title,
+      url: p.url,
+      thumbnailUrl: p.thumbnailUrl,
+      userId: Number(userId),
+      albumId: Number(albumId),
+    }));
   }
-
-  const unsplashPhotos = await unsplashResponse.json();
-
-  // Normalizing JSON responses
-  const photos = unsplashPhotos.map((photo: any, index: number) => ({
-    id: index + 1,
-    title: photo.description || photo.alt_description || "Untitled",
-    url: photo.urls.full,
-    thumbnailUrl: photo.urls.thumb,
-    userId: Number(userId),
-    albumId: Number(albumId),
-  }));
 
   return { album, photos, user };
 };

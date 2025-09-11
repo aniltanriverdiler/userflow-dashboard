@@ -8,7 +8,7 @@ function HomePage() {
         <h1 className="text-5xl sm:text-6xl font-extrabold text-primary mb-4 tracking-tight">
           UserFlow Dashboard
         </h1>
-        <p className="text-xl sm:text-2xl text-muted-foreground font-medium max-w-2xl mx-auto">
+        <p className="text-xl sm:text-2xl text-muted-foreground font-medium max-w-2xl mx-auto mb-6">
           Manage users, posts, albums and your favorites with ease.
         </p>
       </header>
@@ -18,7 +18,9 @@ function HomePage() {
         {/* Users */}
         <div className="relative group bg-card shadow-lg rounded-2xl border border-border transition-transform duration-200 hover:scale-[1.03] hover:shadow-xl flex flex-col items-center justify-center min-h-[220px] p-6">
           <div className="absolute top-4 right-4 opacity-20 text-4xl pointer-events-none select-none flex items-center justify-center w-10 h-10">
-            <span role="img" aria-label="users">👤</span>
+            <span role="img" aria-label="users">
+              👤
+            </span>
           </div>
           <div className="flex flex-col items-center justify-center flex-1 w-full">
             <h4 className="text-2xl font-bold text-primary flex items-center gap-2 mb-2">
@@ -38,7 +40,9 @@ function HomePage() {
         {/* Albums */}
         <div className="relative group bg-card shadow-lg rounded-2xl border border-border transition-transform duration-200 hover:scale-[1.03] hover:shadow-xl flex flex-col items-center justify-center min-h-[220px] p-6">
           <div className="absolute top-4 right-4 opacity-20 text-4xl pointer-events-none select-none flex items-center justify-center w-10 h-10">
-            <span role="img" aria-label="albums">📷</span>
+            <span role="img" aria-label="albums">
+              📷
+            </span>
           </div>
           <div className="flex flex-col items-center justify-center flex-1 w-full">
             <h4 className="text-2xl font-bold text-accent flex items-center gap-2 mb-2">
@@ -58,7 +62,9 @@ function HomePage() {
         {/* Favorites  */}
         <div className="relative group bg-card shadow-lg rounded-2xl border border-border transition-transform duration-200 hover:scale-[1.03] hover:shadow-xl flex flex-col items-center justify-center min-h-[220px] p-6">
           <div className="absolute top-4 right-4 opacity-20 text-4xl pointer-events-none select-none flex items-center justify-center w-10 h-10">
-            <span role="img" aria-label="favorites">★</span>
+            <span role="img" aria-label="favorites">
+              ★
+            </span>
           </div>
           <div className="flex flex-col items-center justify-center flex-1 w-full">
             <h4 className="text-2xl font-bold text-secondary flex items-center gap-2 mb-2">

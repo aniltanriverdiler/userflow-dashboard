@@ -1,24 +1,7 @@
 import { useLoaderData, Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-interface User {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-  phone: string;
-  website: string;
-  company: {
-    name: string;
-  };
-  address: {
-    street: string;
-    suite: string;
-    city: string;
-    zipcode: string;
-  };
-}
+import type { ApiUser } from "../types/types";
 
 function getAvatarColor(name: string) {
   const colors = [
@@ -35,7 +18,7 @@ function getAvatarColor(name: string) {
 }
 
 function UsersPage() {
-  const users = useLoaderData() as User[];
+  const users = useLoaderData() as ApiUser[];
 
   return (
     <div className="container mx-auto px-2 sm:px-4 py-8">
@@ -59,9 +42,7 @@ function UsersPage() {
             </div>
             {/* Name & Username */}
             <div className="text-center space-y-1">
-              <h2 className="text-xl font-bold text-primary">
-                {user.name}
-              </h2>
+              <h2 className="text-xl font-bold text-primary">{user.name}</h2>
               <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-muted text-primary shadow-none">
                 @{user.username}
               </span>
@@ -75,10 +56,16 @@ function UsersPage() {
                 <strong>Phone:</strong> {user.phone}
               </p>
               <p>
-                <strong>Company:</strong> <span className="font-semibold text-accent">{user.company.name}</span>
+                <strong>Company:</strong>{" "}
+                <span className="font-semibold text-accent">
+                  {user.company?.name}
+                </span>
               </p>
               <p>
-                <strong>City:</strong> <span className="font-semibold text-secondary">{user.address.city}</span>
+                <strong>City:</strong>{" "}
+                <span className="font-semibold text-secondary">
+                  {user.address?.city}
+                </span>
               </p>
             </div>
             {/* Button */}

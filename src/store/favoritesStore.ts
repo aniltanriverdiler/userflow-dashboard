@@ -1,35 +1,21 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
-export interface Photo {
-  id: number;
-  title: string;
-  url: string;
-  thumbnailUrl: string;
-  albumId: number;
-  userId: number;
-}
-
-export interface Post {
-  id: number;
-  title: string;
-  body: string;
-  userId: number;
-}
+import type { ApiPhoto, ApiPost } from "../types/types";
 
 interface FavoritesState {
-  favoritesByUser: Record<number, Photo[]>;
-  posts: Post[];
+  favoritesByUser: Record<string, ApiPhoto[]>; // Changed to string for user ID
+  postsByUser: Record<string, ApiPost[]>; // Changed to user-specific posts
   hasHydrated: boolean;
 
-  addPhoto: (photo: Photo, userId: number) => void;
-  removePhoto: (photoId: number, userId: number) => void;
-  isFavorite: (photoId: number, userId: number) => boolean;
-  getPhotosByUser: (userId: number) => Photo[];
+  addPhoto: (photo: ApiPhoto, userId: string) => void;
+  removePhoto: (photoId: number, userId: string) => void;
+  isFavorite: (photoId: number, userId: string) => boolean;
+  getPhotosByUser: (userId: string) => ApiPhoto[];
 
-  addPost: (post: Post) => void;
-  removePost: (postId: number) => void;
-  isPostFavorite: (postId: number) => boolean;
+  addPost: (post: ApiPost, userId: string) => void;
+  removePost: (postId: number, userId: string) => void;
+  isPostFavorite: (postId: number, userId: string) => boolean;
+  getPostsByUser: (userId: string) => ApiPost[];
 
   setHydrated: () => void;
 }
@@ -38,7 +24,7 @@ export const useFavoritesStore = create<FavoritesState>()(
   persist(
     (set, get) => ({
       favoritesByUser: {},
-      posts: [],
+      postsByUser: {},
       hasHydrated: false,
 
       setHydrated: () => set({ hasHydrated: true }),
@@ -74,22 +60,41 @@ export const useFavoritesStore = create<FavoritesState>()(
         return get().favoritesByUser[userId] || [];
       },
 
-      addPost: (post) =>
-        set((state) => ({
-          posts: [...state.posts, post],
-        })),
+      addPost: (post, userId) => {
+        const current = get().postsByUser[userId] || [];
+        if (current.some((p) => p.id === post.id)) return;
 
-      removePost: (postId) =>
         set((state) => ({
-          posts: state.posts.filter((p) => p.id !== postId),
-        })),
+          postsByUser: {
+            ...state.postsByUser,
+            [userId]: [...current, post],
+          },
+        }));
+      },
 
-      isPostFavorite: (postId) => get().posts.some((p) => p.id === postId),
+      removePost: (postId, userId) => {
+        const current = get().postsByUser[userId] || [];
+        set((state) => ({
+          postsByUser: {
+            ...state.postsByUser,
+            [userId]: current.filter((p) => p.id !== postId),
+          },
+        }));
+      },
+
+      isPostFavorite: (postId, userId) => {
+        const current = get().postsByUser[userId] || [];
+        return current.some((p) => p.id === postId);
+      },
+
+      getPostsByUser: (userId) => {
+        return get().postsByUser[userId] || [];
+      },
     }),
     {
       name: "favorites-storage",
       onRehydrateStorage: () => (state) => {
-        state?.setHydrated(); 
+        state?.setHydrated();
       },
     }
   )

@@ -1,29 +1,34 @@
 import { useEffect, useState } from "react";
-import { useFavoritesStore, type Photo } from "../store/favoritesStore";
+import { useFavoritesStore } from "../store/favoritesStore";
+import { useAuthStore } from "../store/authStore";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import type { ApiPhoto } from "../types/types";
 
 function FavoritesPhotosPage() {
-  const currentUserId = Number(localStorage.getItem("current_user_id"));
+  const { user } = useAuthStore();
   const removePhoto = useFavoritesStore((state) => state.removePhoto);
   const hasHydrated = useFavoritesStore((state) => state.hasHydrated);
 
-  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [photos, setPhotos] = useState<ApiPhoto[]>([]);
 
   useEffect(() => {
+    const userKey = user?.id || "";
     const unsubscribe = useFavoritesStore.subscribe((state) => {
-      setPhotos(state.getPhotosByUser(currentUserId));
+      const list = state.favoritesByUser[userKey] ?? [];
+      setPhotos(list);
     });
-    setPhotos(useFavoritesStore.getState().getPhotosByUser(currentUserId));
+    const initial = useFavoritesStore.getState().favoritesByUser[userKey] ?? [];
+    setPhotos(initial);
     return () => unsubscribe();
-  }, [currentUserId]);
+  }, [user?.id]);
 
-  if (!currentUserId) {
+  if (!user) {
     return (
       <div className="container mx-auto px-4 py-6">
         <p className="text-gray-600">
-          No user selected. Please log in or choose a user.
+          Please log in to view your favorite photos.
         </p>
       </div>
     );
@@ -59,7 +64,7 @@ function FavoritesPhotosPage() {
                 <p className="text-sm font-medium truncate text-foreground mb-3 text-center" title={photo.title}>
                   📸 {photo.title}
                 </p>
-                <div className="flex justify-between gap-3 mt-auto">
+                <div className="flex justify-between gap-4 mt-auto">
                   <Link to={`/users/${photo.userId}/albums/${photo.albumId}`} className="w-1/2">
                     <Button size="sm" className="w-full font-semibold" variant="outline">
                       🗂️ Go to Album
@@ -68,7 +73,7 @@ function FavoritesPhotosPage() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={() => removePhoto(photo.id, currentUserId)}
+                    onClick={() => removePhoto(photo.id, user?.id || "")}
                     className="w-1/2 font-semibold text-lg text-accent hover:scale-105 transition-all"
                     aria-label="Remove from favorites"
                   >
